@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>測試頁面 - 豐胸隆乳矽膠保固查詢系統</title>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <!-- 環境配置 -->
+  <script>
+    // 設置環境變數
+    window.ENV = {
+      VITE_API_BASE_URL: 'http://localhost:8080/api/v1',
+      VITE_DEBUG: 'true'
+    };
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main-test.ts"></script>
+  
+  <!-- 初始化 Lucide 圖標 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.lucide) {
+        window.lucide.createIcons();
+        
+        // 每秒重新初始化圖標（確保動態內容也有圖標）
+        setInterval(() => {
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

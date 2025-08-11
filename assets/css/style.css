@@ -1,0 +1,32 @@
+/* 原版 JavaScript 應用的自定義樣式 (已重構為 Svelte) */
+/* 此檔案保留作為參考，Svelte 版本使用 src/app.css */
+
+/* 基本樣式保留供原版使用 */
+.form-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* 載入動畫 */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* 打印樣式 */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
