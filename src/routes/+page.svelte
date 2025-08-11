@@ -19,7 +19,7 @@
 </script>
 
 <svelte:head>
-  <title>捷揚醫材有限公司 - 乳房植入物保固系統</title>
+  <title>偉鉅股份有限公司 - 乳房植入物保固系統</title>
 </svelte:head>
 
 {#if redirecting}
@@ -38,7 +38,7 @@
       <div class="p-8">
         <div class="text-center mb-8">
           <h1 class="text-4xl font-bold mb-4 text-gray-800">
-            捷揚醫材有限公司
+            偉鉅股份有限公司
           </h1>
           <p class="text-xl text-gray-600 mb-6">專業的乳房植入物保固管理服務</p>
           <div class="w-24 h-1 bg-blue-600 mx-auto rounded"></div>
@@ -48,7 +48,7 @@
           <div>
             <h2 class="text-2xl font-semibold mb-4 text-gray-800">關於我們</h2>
             <p class="text-gray-600 mb-4 leading-relaxed">
-              捷揚醫材有限公司致力於為醫療院所和患者提供最優質的乳房植入物產品和保固服務。
+              偉鉅股份有限公司致力於為醫療院所和患者提供最優質的乳房植入物產品和保固服務。
               我們與國際知名品牌合作，確保每一件產品都符合最高品質標準。
             </p>
             <p class="text-gray-600 mb-4 leading-relaxed">

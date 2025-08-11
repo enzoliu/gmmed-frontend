@@ -41,7 +41,7 @@
 </script>
 
 <svelte:head>
-  <title>保固註冊 - 捷揚醫材</title>
+  <title>保固註冊 - 偉鉅股份</title>
 </svelte:head>
 
 <!-- 內容容器 -->

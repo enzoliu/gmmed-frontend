@@ -129,7 +129,7 @@
 
     qrCodes = [];
     for (const id of createdWarranties.ids) {
-      const url = `https://warranty.jymedical.com.tw?action=register&id=${id}`;
+      const url = `https://warranty.gmmed.com.tw?action=register&id=${id}`;
       try {
         const qrCodeDataUrl = await QRCode.toDataURL(url, {
           width: 200,

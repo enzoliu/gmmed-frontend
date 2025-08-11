@@ -20,10 +20,10 @@ echo ""
 # 配置變數 (請根據您的 GCP 設定修改)
 PROJECT_ID=${PROJECT_ID:-"jymedical"}
 REPO=${REPO:-"docker-images"}
-SERVICE_NAME=${SERVICE_NAME:-"jymedical-frontend"}
+SERVICE_NAME=${SERVICE_NAME:-"gmmed-frontend"}
 REGION=${REGION:-"asia-east1"}
 IMAGE_NAME="asia-east1-docker.pkg.dev/${PROJECT_ID}/${REPO}/${SERVICE_NAME}"
-GCS_BUCKET=${GCS_BUCKET:-"jymedical-fn-static"}
+GCS_BUCKET=${GCS_BUCKET:-"gmmed-fn-static"}
 
 # 檢查必要工具
 echo -e "${YELLOW}檢查必要工具...${NC}"
@@ -85,7 +85,7 @@ echo -e "${GREEN}✓ 靜態文件推送完成${NC}"
 # 構建 Docker 映像（使用已構建的靜態文件）
 echo -e "${YELLOW}構建 Docker 映像...${NC}"
 docker buildx build --platform linux/amd64 \
-    --target jymedical-fe \
+    --target gmmed-fe \
     -t ${IMAGE_NAME}:latest \
     --build-arg NODE_ENV=production \
     .

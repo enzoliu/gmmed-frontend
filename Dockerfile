@@ -28,7 +28,7 @@ COPY --from=build /app/build /
 
 
 ## Production image
-FROM node:22-slim AS jymedical-fe
+FROM node:22-slim AS gmmed-fe
 WORKDIR /app
 
 COPY --from=build /app/build build/

@@ -4,7 +4,7 @@
 
 ### 項目目的
 
-本系統是為**捷揚醫材有限公司**開發的乳房植入物保固管理系統，主要功能包括：
+本系統是為**偉鉅股份有限公司**開發的乳房植入物保固管理系統，主要功能包括：
 
 1. **保固註冊**：患者或醫院可以註冊乳房植入物保固，支援雙序號功能
 2. **保固查詢**：管理員可以搜尋和管理保固記錄，支援雙序號搜尋
@@ -359,7 +359,7 @@ async function batchCreateWarranties(count) {
 
     // 生成患者填寫網址
     const urls = data.ids.map(
-      (id) => `https://warranty.jymedical.com.tw?action=register&id=${id}`
+      (id) => `https://warranty.gmmed.com.tw?action=register&id=${id}`
     );
 
     return urls;
@@ -1251,7 +1251,7 @@ async function fillWarranty(warrantyId, formData) {
 1. **管理員保固管理頁面**：
 
    - **批次創建功能**：使用批次創建 API，輸入數量獲得 UUID 陣列
-   - **網址生成器**：自動生成患者填寫網址 `https://warranty.jymedical.com.tw?action=register&id={uuid}`
+   - **網址生成器**：自動生成患者填寫網址 `https://warranty.gmmed.com.tw?action=register&id={uuid}`
    - **狀態追蹤**：顯示哪些保固已被填寫，哪些還在等待
    - **保固列表**：只顯示已填寫的保固記錄（`created_at != updated_at`）
 
@@ -1482,7 +1482,7 @@ MAILGUN_FROM_EMAIL=noreply@your-domain.com
 ```bash
 COMPANY_NOTIFICATION_EMAIL=admin@company.com.tw
 EMAIL_TEMPLATE_SUBJECT={patient_surname} 您的植入物保固已完成登錄
-EMAIL_TEMPLATE_SENDER_NAME=捷揚醫材客服部
+EMAIL_TEMPLATE_SENDER_NAME=偉鉅股份客服部
 ```
 
 #### 重發信件功能
@@ -1597,7 +1597,7 @@ MAILGUN_FROM_EMAIL=noreply@your-domain.com
 ```bash
 COMPANY_NOTIFICATION_EMAIL=admin@company.com.tw
 EMAIL_TEMPLATE_SUBJECT={patient_surname} 您的植入物保固已完成登錄
-EMAIL_TEMPLATE_SENDER_NAME=捷揚醫材客服部
+EMAIL_TEMPLATE_SENDER_NAME=偉鉅股份客服部
 ```
 
 #### 錯誤處理機制
@@ -1675,7 +1675,7 @@ const WarrantyDetail = ({ warranty }) => (
 
    ```javascript
    const urls = warranties.ids.map(
-     (id) => `https://warranty.jymedical.com.tw?action=register&id=${id}`
+     (id) => `https://warranty.gmmed.com.tw?action=register&id=${id}`
    );
    ```
 
