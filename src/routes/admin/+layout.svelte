@@ -41,7 +41,7 @@
   <div class="flex">
     <!-- 桌面版側邊欄 -->
     <aside
-      class="hidden md:block w-40 flex-shrink-0 bg-gray-50 border-r border-gray-200 p-4"
+      class="hidden md:block w-40 flex-shrink-0 bg-gmmed-50 border-r border-gray-200 p-4 h-screen"
     >
       <h2 class="text-xl font-bold mb-4 text-gray-800">管理選單</h2>
       <nav class="flex flex-col space-y-1">
@@ -51,11 +51,9 @@
           class:font-semibold={page.url.pathname.startsWith(
             "/admin/warranties"
           )}
-          class:bg-blue-100={page.url.pathname.startsWith("/admin/warranties")}
-          class:text-blue-800={page.url.pathname.startsWith(
-            "/admin/warranties"
-          )}
-          class:hover:bg-gray-100={!page.url.pathname.startsWith(
+          class:bg-gold-100={page.url.pathname.startsWith("/admin/warranties")}
+          class:text-primary={page.url.pathname.startsWith("/admin/warranties")}
+          class:hover:bg-gold-50={!page.url.pathname.startsWith(
             "/admin/warranties"
           )}
           class:text-gray-700={!page.url.pathname.startsWith(
@@ -68,23 +66,36 @@
           href="/admin/products"
           class="px-4 py-2 rounded-lg transition-colors"
           class:font-semibold={page.url.pathname.startsWith("/admin/products")}
-          class:bg-blue-100={page.url.pathname.startsWith("/admin/products")}
-          class:text-blue-800={page.url.pathname.startsWith("/admin/products")}
-          class:hover:bg-gray-100={!page.url.pathname.startsWith(
+          class:bg-gold-100={page.url.pathname.startsWith("/admin/products")}
+          class:text-primary={page.url.pathname.startsWith("/admin/products")}
+          class:hover:bg-gold-50={!page.url.pathname.startsWith(
             "/admin/products"
           )}
           class:text-gray-700={!page.url.pathname.startsWith("/admin/products")}
         >
           產品管理
         </a>
+        <a
+          href="/admin/serials"
+          class="px-4 py-2 rounded-lg transition-colors"
+          class:font-semibold={page.url.pathname.startsWith("/admin/serials")}
+          class:bg-gold-100={page.url.pathname.startsWith("/admin/serials")}
+          class:text-primary={page.url.pathname.startsWith("/admin/serials")}
+          class:hover:bg-gold-50={!page.url.pathname.startsWith(
+            "/admin/serials"
+          )}
+          class:text-gray-700={!page.url.pathname.startsWith("/admin/serials")}
+        >
+          序號管理
+        </a>
         {#if $authStore.user?.role === "admin"}
           <a
             href="/admin/users"
             class="px-4 py-2 rounded-lg transition-colors"
             class:font-semibold={page.url.pathname.startsWith("/admin/users")}
-            class:bg-blue-100={page.url.pathname.startsWith("/admin/users")}
-            class:text-blue-800={page.url.pathname.startsWith("/admin/users")}
-            class:hover:bg-gray-100={!page.url.pathname.startsWith(
+            class:bg-gold-100={page.url.pathname.startsWith("/admin/users")}
+            class:text-primary={page.url.pathname.startsWith("/admin/users")}
+            class:hover:bg-gold-50={!page.url.pathname.startsWith(
               "/admin/users"
             )}
             class:text-gray-700={!page.url.pathname.startsWith("/admin/users")}
@@ -95,9 +106,9 @@
             href="/admin/audit"
             class="px-4 py-2 rounded-lg transition-colors"
             class:font-semibold={page.url.pathname.startsWith("/admin/audit")}
-            class:bg-blue-100={page.url.pathname.startsWith("/admin/audit")}
-            class:text-blue-800={page.url.pathname.startsWith("/admin/audit")}
-            class:hover:bg-gray-100={!page.url.pathname.startsWith(
+            class:bg-gold-100={page.url.pathname.startsWith("/admin/audit")}
+            class:text-primary={page.url.pathname.startsWith("/admin/audit")}
+            class:hover:bg-gold-50={!page.url.pathname.startsWith(
               "/admin/audit"
             )}
             class:text-gray-700={!page.url.pathname.startsWith("/admin/audit")}

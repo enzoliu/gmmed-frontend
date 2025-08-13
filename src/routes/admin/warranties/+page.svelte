@@ -497,7 +497,7 @@
               placeholder="支援搜尋：患者姓名、身分證字號、手機號碼、產品序號、醫院名稱、醫師姓名"
               class="flex-1"
             />
-            <Button onclick={handleFilterChange}>
+            <Button onclick={handleFilterChange} variant="outline">
               <Search class="mr-2 h-4 w-4" />
               搜尋
             </Button>

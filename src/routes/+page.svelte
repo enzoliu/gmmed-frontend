@@ -37,27 +37,26 @@
     >
       <div class="p-8">
         <div class="text-center mb-8">
-          <h1 class="text-4xl font-bold mb-4 text-gray-800">
-            偉鉅股份有限公司
-          </h1>
-          <p class="text-xl text-gray-600 mb-6">專業的乳房植入物保固管理服務</p>
-          <div class="w-24 h-1 bg-blue-600 mx-auto rounded"></div>
+          <h1 class="text-4xl font-bold mb-4 text-gray-800">Grand Medical</h1>
+          <p class="text-xl text-gray-600 mb-6">
+            菁英群聚，與您齊心開創偉大鉅業，洞見壯麗未來。
+          </p>
+          <div class="w-24 h-1 bg-gold-500 mx-auto rounded"></div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 class="text-2xl font-semibold mb-4 text-gray-800">關於我們</h2>
             <p class="text-gray-600 mb-4 leading-relaxed">
-              偉鉅股份有限公司致力於為醫療院所和患者提供最優質的乳房植入物產品和保固服務。
-              我們與國際知名品牌合作，確保每一件產品都符合最高品質標準。
+              我們提供的不只是專業服務，並且視客戶為一起奮鬥合作的夥伴，細心地解決夥伴所有難題。我們擁有自傲、完整的行銷團隊，
+              從產品端至客戶端，不僅僅是代理銷售，在專業團隊運作下，精準的市場策略、售後服務，再加上產品臨床應用與完整教育訓練，打造獨特品牌的技術底蘊。
             </p>
             <p class="text-gray-600 mb-4 leading-relaxed">
-              我們的保固系統採用先進的數位化管理，為每一位患者提供完整的保固追蹤服務，
-              確保您的權益得到充分保障。
+              我們的理念是，替客戶把關，代理好的產品使其可穩定貢獻業績、讓彼此長久經營共同獲利，創造雙贏。
             </p>
           </div>
           <div
-            class="bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-lg"
+            class="bg-gradient-to-br from-gmmed-50 to-gmmed-100 p-6 rounded-lg"
           >
             <h3 class="text-lg font-semibold mb-4 text-gray-800">我們的優勢</h3>
             <div class="space-y-3">
@@ -86,7 +85,7 @@
       >
         <div class="text-center">
           <div
-            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            class="w-16 h-16 bg-gmmed-100 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <Shield class="h-8 w-8 text-blue-600" />
           </div>

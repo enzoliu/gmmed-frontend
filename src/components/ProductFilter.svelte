@@ -106,6 +106,7 @@
             sizes = response.data.data;
             if (sizes.length === 1) {
               filters.size = sizes[0];
+              onFiltersChange?.(filters);
             }
             break;
         }

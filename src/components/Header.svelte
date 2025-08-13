@@ -19,38 +19,56 @@
 </script>
 
 <header
-  class="sticky top-0 z-50 w-full border-b {page.url.pathname.startsWith(
-    '/admin'
-  )
-    ? 'bg-white border-gray-200'
-    : 'bg-white/80 backdrop-blur-md border-white/20'}"
+  class="
+  sticky top-0 z-50 w-full border-b
+  {page.url.pathname.startsWith('/admin')
+    ? 'bg-gmmed-900 border-gray-200'
+    : 'bg-gmmed-900 backdrop-blur-md opacity-80 border-white/20'}
+  bg-[url('/images/dots-mini-strong.png')]
+  bg-repeat
+  bg-blend-multiply
+  "
 >
-  <div
-    class="container flex h-16 max-w-screen-2xl items-center justify-between"
-  >
-    <a href="/" class="flex items-center space-x-2">
-      <img src="/images/logo.png" alt="logo" class="h-5" />
-      <span class="text-xl font-bold text-primary">保固管理系統</span>
-    </a>
+  <div class="relative h-16 w-full max-w-[80%] grid grid-cols-3 gap-4 mx-auto">
+    <div>
+      <a href="/" class="flex items-center space-x-2 h-16">
+        <img src="/images/logo.png" alt="logo" class="h-full" />
+      </a>
+    </div>
 
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center justify-center space-x-4">
+      <span class="text-xl font-bold text-white">保固管理系統</span>
+    </div>
+
+    <div class="flex items-center justify-end space-x-4">
       {#if $authStore.user}
         <Button
           variant="ghost"
+          class="hover:bg-primary"
           size="sm"
           onclick={() => goto("/admin/warranties")}
         >
-          <Settings class="mr-2 h-4 w-4 text-foreground" />
-          管理
+          <Settings class="mr-2 h-4 w-4 text-white" />
+          <span class="text-white">管理</span>
         </Button>
-        <Button variant="ghost" size="sm" onclick={handleLogout}>
-          <LogOut class="mr-2 h-4 w-4 text-foreground" />
-          登出
+        <Button
+          variant="ghost"
+          class="hover:bg-primary"
+          size="sm"
+          onclick={handleLogout}
+        >
+          <LogOut class="mr-2 h-4 w-4 text-white" />
+          <span class="text-white">登出</span>
         </Button>
       {:else}
-        <Button variant="ghost" size="sm" onclick={() => goto("/login")}>
-          <LogIn class="mr-2 h-4 w-4 text-foreground" />
-          登入
+        <Button
+          variant="ghost"
+          class="hover:bg-primary"
+          size="sm"
+          onclick={() => goto("/login")}
+        >
+          <LogIn class="mr-2 h-4 w-4 text-white" />
+          <span class="text-white">登入</span>
         </Button>
       {/if}
     </div>
