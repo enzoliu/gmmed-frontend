@@ -67,6 +67,10 @@ export interface ProductListResponse {
     total_pages: number;
 }
 
+export interface ProductAllResponse {
+    data: Product[];
+}
+
 export interface ProductMetadata {
     data: string[];
 }
@@ -128,6 +132,79 @@ export interface AuditLogListResponse {
     page: number;
     page_size: number;
     total_pages: number;
+}
+
+/**
+ * Interfaces for Serial Management
+ */
+export interface Serial {
+  id: string;
+  serial_number: string;
+  full_serial_number: string;
+  product_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SerialImportItem {
+  product_id: string;
+  serial_number: string;
+  full_serial_number: string;
+}
+
+export interface SerialBulkImportRequest {
+  serials: SerialImportItem[];
+}
+
+export interface SerialImportErrorItem {
+  index: number;
+  product_id: string;
+  serial_number: string;
+  full_serial_number: string;
+  error: string;
+}
+
+export interface SerialBulkImportResponse {
+  success_count: number;
+  failed_count: number;
+  failed_items?: SerialImportErrorItem[];
+}
+
+export interface SerialCreateRequest {
+  serial_number: string;
+  full_serial_number: string;
+  product_id: string;
+}
+
+export interface SerialUpdateRequest {
+  serial_number?: string;
+  full_serial_number?: string;
+  product_id?: string;
+}
+
+export interface SerialListResponse {
+  serials: Serial[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface SerialDetailResponse {
+  id: string;
+  serial_number: string;
+  full_serial_number: string;
+  product_id: string | null;
+  product?: Product;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SerialStatsResponse {
+  total_serials: number;
+  assigned_serials: number;
+  unassigned_serials: number;
+  total_products: number;
 }
 
 /**
@@ -348,6 +425,10 @@ class ApiService {
     return this.authedRequest<ProductListResponse>(`/api/v1/products/manage?${params.toString()}`);
   }
 
+  async getProductsAll(): Promise<ApiResponse<ProductAllResponse>> {
+    return this.authedRequest<ProductAllResponse>('/api/v1/products/all');
+  }
+
   async getProductByCondition(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<Product>> {
     return this.request<Product>(`/api/v1/product?${params.toString()}`);
   }
@@ -466,6 +547,67 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  // Serial management methods
+  async getSerials(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<SerialListResponse>> {
+    return this.authedRequest<SerialListResponse>(`/api/v1/serials?${params.toString()}`);
+  }
+
+  async getSerialById(id: string): Promise<ApiResponse<Serial>> {
+    return this.authedRequest<Serial>(`/api/v1/serials/${id}`);
+  }
+
+  async getSerialBySerialNumber(serialNumber: string): Promise<ApiResponse<Serial>> {
+    const params = new URLSearchParams();
+    params.set('serial_number', serialNumber);
+    return this.authedRequest<Serial>(`/api/v1/serials/by-serial-number?${params.toString()}`);
+  }
+
+  async createSerial(data: SerialCreateRequest): Promise<ApiResponse<Serial>> {
+    return this.authedRequest<Serial>('/api/v1/serials', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateSerial(id: string, data: SerialUpdateRequest): Promise<ApiResponse<Serial>> {
+    return this.authedRequest<Serial>(`/api/v1/serials/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteSerial(id: string): Promise<ApiResponse<never>> {
+    return this.authedRequest<never>(`/api/v1/serials/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async bulkCreateSerials(data: SerialBulkImportRequest): Promise<ApiResponse<SerialBulkImportResponse>> {
+    return this.authedRequest<SerialBulkImportResponse>('/api/v1/serials/bulk', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async checkSerialExists(serialNumber: string): Promise<ApiResponse<{ exists: boolean }>> {
+    const params = new URLSearchParams();
+    params.set('serial_number', serialNumber);
+    return this.authedRequest<{ exists: boolean }>(`/api/v1/serials/check-exists?${params.toString()}`);
+  }
+
+  async getSerialsWithProduct(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<SerialListResponse>> {
+    return this.authedRequest<SerialListResponse>(`/api/v1/serials/with-product?${params.toString()}`);
+  }
+
+  async getSerialStats(): Promise<ApiResponse<SerialStatsResponse>> {
+    return this.authedRequest<SerialStatsResponse>('/api/v1/serials/stats');
+  }
+
+  async listSerialsUsedByWarranty(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<SerialListResponse>> {
+    return this.authedRequest<SerialListResponse>(`/api/v1/serials/used-by-warranty?${params.toString()}`);
+  }
+
   getCookie(name: string): string | null {
     const cookies = document.cookie.split("; ");
     for (const cookie of cookies) {
