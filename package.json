@@ -44,9 +44,11 @@
   ],
   "dependencies": {
     "@sveltejs/adapter-static": "^3.0.8",
+    "flowbite-svelte": "^1.12.5",
     "lucide-svelte": "^0.522.0",
     "qrcode": "^1.5.4",
     "tailwind-merge": "^3.3.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "xlsx": "^0.18.5"
   }
 }

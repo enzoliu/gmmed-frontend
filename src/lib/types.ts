@@ -8,6 +8,13 @@ export interface ProductFilters {
   active: string;
 }
 
+export interface PatientProductFilters {
+  brand: string;
+  category: string;
+  subcategory: string;
+  size: string;
+}
+
 export interface ProductFilterProps {
   filters: ProductFilters;
   presetBrand?: string;

@@ -50,7 +50,7 @@
 
 <script lang="ts">
   let {
-    class: className,
+    class: className = "",
     variant = "default",
     size = "default",
     href = undefined,
@@ -63,7 +63,7 @@
 
 <button
   bind:this={ref}
-  class={buttonVariants({ variant, size, class: className })}
+  class={buttonVariants({ variant, size, class: className as any })}
   {type}
   {...restProps}
 >

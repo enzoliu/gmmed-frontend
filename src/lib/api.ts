@@ -147,6 +147,7 @@ export interface Serial {
 }
 
 export interface SerialImportItem {
+  index: number;
   product_id: string;
   serial_number: string;
   full_serial_number: string;
@@ -215,6 +216,7 @@ export interface WarrantyRegistration {
   product_serial_number: string;
   product_serial_number_2?: string; // 第二個植入體序號（選填，用於雙側植入手術）
   patient_name: string;
+  is_local_identity: boolean;
   patient_id: string;
   patient_birth_date: string;
   patient_phone: string;
@@ -298,6 +300,9 @@ class ApiService {
     options: RequestInit = {},
     customFetch?: typeof fetch
   ): Promise<ApiResponse<T>> {
+    if (!browser) {
+      return { data: null as T };
+    }
     const url = `${config.apiBaseUrl}${endpoint}`;
 
     const headers = new Headers(options.headers || {});
@@ -311,11 +316,23 @@ class ApiService {
     try {
       const fetchFunction = customFetch || fetch;
       const response = await fetchFunction(url, requestConfig);
-      const data = await response.json();
+      
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // 如果響應不是 JSON 格式，設置 data 為 null
+        data = null;
+      }
 
-      if (!response.ok) {
-        const apiErrorResponse = data as ApiResponse<never>;
-        const errorMessage = apiErrorResponse.error || apiErrorResponse.message || `HTTP error! status: ${response.status}`;
+      if (!response.ok && response.status >= 400) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        
+        if (data && typeof data === 'object') {
+          const apiErrorResponse = data as ApiResponse<never>;
+          errorMessage = apiErrorResponse.error || apiErrorResponse.message || errorMessage;
+        }
+        
         throw new Error(errorMessage);
       }
 
@@ -334,6 +351,9 @@ class ApiService {
     options: RequestInit = {},
     customFetch?: typeof fetch
   ): Promise<ApiResponse<T>> {
+    if (!browser) {
+      return { data: null as T };
+    }
     const url = `${config.apiBaseUrl}${endpoint}`;
 
     const headers = new Headers(options.headers || {});
@@ -371,11 +391,22 @@ class ApiService {
         }
       }
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // 如果響應不是 JSON 格式，設置 data 為 null
+        data = null;
+      }
 
-      if (!response.ok) {
-        const apiErrorResponse = data as ApiResponse<never>;
-        const errorMessage = apiErrorResponse.error || apiErrorResponse.message || `HTTP error! status: ${response.status}`;
+      if (!response.ok && response.status !== 207) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        
+        if (data && typeof data === 'object') {
+          const apiErrorResponse = data as ApiResponse<never>;
+          errorMessage = apiErrorResponse.error || apiErrorResponse.message || errorMessage;
+        }
+        
         throw new Error(errorMessage);
       }
 
@@ -388,6 +419,9 @@ class ApiService {
 
   // Authentication methods
   async login(credentials: LoginRequest): Promise<ApiResponse<boolean>> {
+    if (!browser) {
+      return { data: false };
+    }
     const endpoint = '/api/v1/auth/login';
     const response = await fetch(`${config.apiBaseUrl}${endpoint}`, {
       method: 'POST',
@@ -403,6 +437,9 @@ class ApiService {
   }
 
   async logout(): Promise<ApiResponse<void>> {
+    if (!browser) {
+      return {};
+    }
     await this.request<void>('/api/v1/auth/logout', {
       method: 'POST',
       credentials: 'include',
@@ -536,9 +573,10 @@ class ApiService {
     });
   }
 
-  async checkSerialNumber(serialNumber: string, customFetch?: typeof fetch): Promise<ApiResponse<SerialNumberCheckResponse>> {
+  async checkSerialNumber(serialNumber: string, warrantyID: string, customFetch?: typeof fetch): Promise<ApiResponse<SerialNumberCheckResponse>> {
     const params = new URLSearchParams();
     params.set('serial_number', serialNumber);
+    params.set('warranty_id', warrantyID);
     return this.request(`/api/v1/warranty/check-serial?${params.toString()}`, {}, customFetch);
   }
 
@@ -584,7 +622,7 @@ class ApiService {
   }
 
   async bulkCreateSerials(data: SerialBulkImportRequest): Promise<ApiResponse<SerialBulkImportResponse>> {
-    return this.authedRequest<SerialBulkImportResponse>('/api/v1/serials/bulk', {
+    return this.authedRequest<SerialBulkImportResponse>('/api/v1/serials/import', {
       method: 'POST',
       body: JSON.stringify(data),
     });

@@ -12,7 +12,7 @@
   import Dialog from "$components/ui/Dialog.svelte";
   import Label from "$components/ui/Label.svelte";
   import Input from "$components/ui/Input.svelte";
-  import { Plus, FilePenLine, Trash2, Search, Filter } from "lucide-svelte";
+  import { Plus, FilePenLine, Trash2, Upload } from "lucide-svelte";
   import SerialForm from "$components/SerialForm.svelte";
 
   let serials: Serial[] = [];
@@ -21,6 +21,17 @@
   let isFormLoading = false;
   let isDialogOpen = false;
   let selectedSerial: Serial | null = null;
+  let isUploadDialogOpen = false;
+  let isUploading = false;
+  let uploadProgress = 0;
+  let failedItems: any[] = [];
+  let showFailedItems = false;
+  let uploadResult: {
+    success_count: number;
+    failed_count: number;
+    failed_items?: any[];
+  } | null = null;
+  let isFailedItemsDialogOpen = false;
 
   let total = 0;
   let page = 1;
@@ -45,24 +56,13 @@
         params.set("full_serial_number", filters.full_serial_number);
       if (filters.product_id) params.set("product_id", filters.product_id);
 
-      console.log("Fetching serials with params:", params.toString());
       const response = await apiService.getSerials(params);
-      console.log("API response:", response);
-
       if (response.data) {
-        console.log("Response data:", response.data);
-        console.log("Serials data:", response.data.serials);
-
         // 強制創建新數組並賦值 - 使用後端實際返回的字段名
         serials = response.data.serials ? [...response.data.serials] : [];
         total = response.data.total || 0;
         totalPages = response.data.total_pages || 1;
-
-        console.log("Updated serials:", serials);
-        console.log("Updated total:", total);
-        console.log("Updated totalPages:", totalPages);
       } else {
-        console.log("No response data");
         serials = [];
         total = 0;
         totalPages = 1;
@@ -114,9 +114,15 @@
   }
 
   async function openEditForm(serial: Serial) {
+    // 先載入產品資料
+    await fetchProducts();
     // 然後再設置 selectedSerial 和開啟 dialog
     selectedSerial = serial;
     isDialogOpen = true;
+  }
+
+  function openUploadDialog() {
+    isUploadDialogOpen = true;
   }
 
   function closeDialog() {
@@ -165,10 +171,197 @@
     }
   }
 
-  function getProductName(productId: string | null): string {
+  function getProductModelNumber(productId: string | null): string {
     if (!productId) return "未知產品";
     const product = products.find((p) => p.id === productId);
-    return product ? `${product.brand} ${product.model_number}` : "未知產品";
+    return product ? `${product.model_number}` : "未知產品";
+  }
+
+  function getProductType(productId: string | null): string {
+    if (!productId) return "未知產品";
+    const product = products.find((p) => p.id === productId);
+    return product ? `${product.type}` : "未知產品";
+  }
+
+  // CSV 上傳處理函數
+  async function handleFileUpload(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file) return;
+
+    // 檢查文件類型
+    const allowedTypes = [
+      "text/csv",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ];
+
+    if (
+      !allowedTypes.includes(file.type) &&
+      !file.name.match(/\.(csv|xls|xlsx)$/i)
+    ) {
+      notificationStore.error("請選擇 CSV、XLS 或 XLSX 檔案");
+      return;
+    }
+
+    isUploading = true;
+    uploadProgress = 0;
+    failedItems = []; // 清空失敗項目
+    uploadResult = null; // 清空上傳結果
+    showFailedItems = false; // 隱藏失敗項目顯示
+
+    const validRow = (row: any[]) => {
+      return row.some((cell) => cell !== null && cell.trim() !== "");
+    };
+
+    try {
+      // 讀取 Excel/CSV 文件
+      const { ReadExcelOrCSV } = await import("$lib/excel");
+      const data = (await ReadExcelOrCSV(file, false)) as (
+        | string
+        | number
+        | boolean
+        | null
+      )[][];
+
+      if (data.length < 2) {
+        notificationStore.error("檔案至少需要包含標題行和一行資料");
+        return;
+      }
+
+      // 從第二行開始處理資料（跳過標題行）
+      const serialsData = data.slice(1).filter(validRow);
+      const serialsToImport: any[] = [];
+
+      console.log("total:", serialsData.length);
+
+      for (let i = 0; i < serialsData.length; i++) {
+        const row = serialsData[i];
+        uploadProgress = ((i + 1) / serialsData.length) * 100;
+
+        // 第二列是 model_number（第1個索引），第七列是 full_serial_number（第6個索引）
+        const modelNumber = String(row[1] || "").trim();
+        const fullSerialNumber = String(row[6] || "").trim();
+
+        if (!modelNumber || !fullSerialNumber) {
+          failedItems.push({
+            index: i, // 行號從 0 開始
+            product_id: null,
+            serial_number: null,
+            full_serial_number: fullSerialNumber,
+            error: `資料異常，請檢查。`,
+          });
+          continue; // 跳過空行
+        }
+
+        // 根據 model_number 找到對應的 product_id
+        // 注意：CSV 中的 model_number 沒有 dash，需要忽略 dash 進行比對
+        const product = products.find((p) => {
+          const csvModelNumber = modelNumber.replace(/-/g, "");
+          const dbModelNumber = p.model_number.replace(/-/g, "");
+          return csvModelNumber === dbModelNumber;
+        });
+
+        if (!product) {
+          console.warn(`找不到對應的產品: ${modelNumber}`);
+          failedItems.push({
+            index: i, // 行號從 0 開始
+            product_id: null,
+            serial_number: null,
+            full_serial_number: fullSerialNumber,
+            error: `找不到對應的產品: ${modelNumber}`,
+          });
+          continue;
+        }
+
+        // 從 full_serial_number 提取 serial_number（倒數11碼）
+        const serialNumber = fullSerialNumber.slice(-11);
+
+        serialsToImport.push({
+          index: i,
+          product_id: product.id,
+          serial_number: serialNumber,
+          full_serial_number: fullSerialNumber,
+        });
+      }
+
+      if (serialsToImport.length === 0) {
+        notificationStore.error("沒有找到有效的資料可以匯入");
+        return;
+      }
+
+      // 調用 API 進行批量創建
+      const response = await apiService.bulkCreateSerials({
+        serials: serialsToImport,
+      });
+
+      if (response.data) {
+        uploadResult = response.data;
+
+        // 合併 CSV 處理過程中的失敗項目和 API 返回的失敗項目
+        let allFailedItems: any[] = [];
+        if (uploadResult.failed_items && uploadResult.failed_items.length > 0) {
+          for (let i = 0; i < serialsData.length; i++) {
+            if (failedItems.find((item) => item.index === i)) {
+              allFailedItems.push(failedItems.find((item) => item.index === i));
+            } else if (
+              uploadResult.failed_items.find((item) => item.index === i)
+            ) {
+              allFailedItems.push(
+                uploadResult.failed_items.find((item) => item.index === i)
+              );
+            }
+          }
+        } else {
+          allFailedItems = [...failedItems];
+        }
+
+        if (allFailedItems.length > 0) {
+          notificationStore.error(
+            `匯入完成，成功 ${uploadResult.success_count} 筆，失敗 ${allFailedItems.length} 筆`
+          );
+          failedItems = allFailedItems; // 更新失敗項目
+          // 關閉上傳 Dialog 並開啟失敗項目 Dialog
+          isUploadDialogOpen = false;
+          isFailedItemsDialogOpen = true;
+        } else {
+          notificationStore.success(
+            `成功匯入 ${uploadResult.success_count} 筆序號`
+          );
+          // 完全成功時才關閉 Dialog 並刷新列表
+          isUploadDialogOpen = false;
+          await fetchSerials();
+        }
+      }
+    } catch (error: any) {
+      console.error("CSV 上傳錯誤:", error);
+      notificationStore.error(`上傳失敗: ${error.message}`);
+    } finally {
+      isUploading = false;
+      uploadProgress = 0;
+      // 清空文件輸入
+      target.value = "";
+    }
+  }
+
+  function closeUploadDialog() {
+    isUploadDialogOpen = false;
+    isUploading = false;
+    uploadProgress = 0;
+    // 不清空失敗項目資料，因為可能會在失敗項目 Dialog 中顯示
+    // failedItems = [];
+    // showFailedItems = false;
+    // uploadResult = null;
+  }
+
+  function closeFailedItemsDialog() {
+    isFailedItemsDialogOpen = false;
+    failedItems = [];
+    showFailedItems = false;
+    uploadResult = null;
+    // 刷新序號列表
+    fetchSerials();
   }
 
   onMount(async () => {
@@ -189,10 +382,16 @@
 <div>
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold">序號列表</h2>
-    <Button onclick={openCreateForm}>
-      <Plus class="mr-2 h-4 w-4" />
-      新增序號
-    </Button>
+    <div class="flex gap-2">
+      <Button variant="outline" onclick={openCreateForm}>
+        <Plus class="mr-2 h-4 w-4" />
+        新增序號
+      </Button>
+      <Button onclick={openUploadDialog}>
+        <Upload class="mr-2 h-4 w-4" />
+        上傳 CSV
+      </Button>
+    </div>
   </div>
 
   <!-- 手機版搜尋區域 -->
@@ -355,8 +554,8 @@
         <thead class="bg-muted/50">
           <tr class="[&_th]:px-4 [&_th]:py-3 [&_th]:text-left">
             <th>序號</th>
-            <th>完整序號</th>
-            <th>產品</th>
+            <th>產品類型</th>
+            <th>產品型號</th>
             <th>建立時間</th>
             <th>操作</th>
           </tr>
@@ -365,8 +564,10 @@
           {#each serials as serial (serial.id)}
             <tr class="border-t [&_td]:px-4 [&_td]:py-3">
               <td class="font-medium">{serial.serial_number}</td>
-              <td class="max-w-xs truncate">{serial.full_serial_number}</td>
-              <td>{getProductName(serial.product_id)}</td>
+              <td class="max-w-xs truncate"
+                >{getProductType(serial.product_id)}</td
+              >
+              <td>{getProductModelNumber(serial.product_id)}</td>
               <td class="whitespace-nowrap">
                 {new Date(serial.created_at).toLocaleDateString("zh-TW")}
               </td>
@@ -438,4 +639,134 @@
     on:submit={(e) => handleFormSubmit(e.detail)}
     on:cancel={closeDialog}
   />
+</Dialog>
+
+<!-- CSV 上傳 Dialog -->
+<Dialog
+  bind:isOpen={isUploadDialogOpen}
+  title="上傳 CSV 檔案"
+  onClose={closeUploadDialog}
+  class="max-w-2xl"
+>
+  <div class="space-y-4">
+    <div class="text-sm text-muted-foreground">
+      <p>請選擇包含序號資料的 CSV、XLS 或 XLSX 檔案。</p>
+      <p class="mt-2">檔案格式說明：</p>
+      <ul class="mt-2 list-disc list-inside space-y-1">
+        <li>第一行：標題行（會被忽略）</li>
+        <li>第二列：產品型號（model_number，不含 dash）</li>
+        <li>第七列：完整序號（full_serial_number）</li>
+      </ul>
+    </div>
+
+    <div
+      class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"
+    >
+      <input
+        type="file"
+        accept=".csv,.xls,.xlsx"
+        on:change={handleFileUpload}
+        class="hidden"
+        id="csv-upload"
+        disabled={isUploading}
+      />
+      <label
+        for="csv-upload"
+        class="cursor-pointer block"
+        class:pointer-events-none={isUploading}
+      >
+        {#if isUploading}
+          <div class="space-y-2">
+            <div
+              class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"
+            ></div>
+            <p class="text-sm text-muted-foreground">
+              處理中... {Math.round(uploadProgress)}%
+            </p>
+          </div>
+        {:else}
+          <Upload class="h-8 w-8 text-gray-400 mx-auto mb-2" />
+          <p class="text-sm text-gray-600">點擊選擇檔案或拖拽檔案到此處</p>
+          <p class="text-xs text-gray-500 mt-1">支援 CSV、XLS、XLSX 格式</p>
+        {/if}
+      </label>
+    </div>
+
+    {#if isUploading}
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div
+          class="bg-primary h-2 rounded-full transition-all duration-300"
+          style="width: {uploadProgress}%"
+        ></div>
+      </div>
+    {/if}
+  </div>
+</Dialog>
+
+<!-- 失敗項目詳細 Dialog -->
+<Dialog
+  bind:isOpen={isFailedItemsDialogOpen}
+  title="匯入失敗項目詳情"
+  onClose={closeFailedItemsDialog}
+  class="max-w-4xl"
+>
+  <div class="space-y-4">
+    {#if uploadResult}
+      <div class="p-4 border rounded-lg bg-blue-50">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="p-3 bg-white rounded border border-blue-200">
+            <p class="text-2xl font-bold text-blue-600">
+              {uploadResult.success_count}
+            </p>
+            <p class="text-sm text-blue-700">成功匯入</p>
+          </div>
+          <div class="p-3 bg-white rounded border border-red-200">
+            <p class="text-2xl font-bold text-red-600">
+              {failedItems.length}
+            </p>
+            <p class="text-sm text-red-700">匯入失敗</p>
+          </div>
+        </div>
+      </div>
+    {/if}
+
+    <div class="p-4 border rounded-lg bg-red-50">
+      <h3 class="text-lg font-semibold text-red-800 mb-3">失敗項目詳細資訊</h3>
+
+      <div class="max-h-96 overflow-y-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-red-100">
+            <tr>
+              <th class="text-left p-2 text-red-800">行號</th>
+              <th class="text-left p-2 text-red-800">產品ID</th>
+              <th class="text-left p-2 text-red-800">序號</th>
+              <th class="text-left p-2 text-red-800">完整序號</th>
+              <th class="text-left p-2 text-red-800">錯誤原因</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each failedItems as item}
+              <tr class="border-b border-red-200">
+                <td class="p-2 text-red-700">{item.index + 1}</td>
+                <td class="p-2 text-red-700 font-mono text-xs"
+                  >{item.product_id || "N/A"}</td
+                >
+                <td class="p-2 text-red-700 font-mono text-xs"
+                  >{item.serial_number || "N/A"}</td
+                >
+                <td class="p-2 text-red-700 font-mono text-xs max-w-32 truncate"
+                  >{item.full_serial_number || "N/A"}</td
+                >
+                <td class="p-2 text-red-700">{item.error}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 text-xs text-red-600">
+        <p>💡 提示：請檢查失敗項目的資料格式，修正後可以重新上傳</p>
+      </div>
+    </div>
+  </div>
 </Dialog>

@@ -6,7 +6,7 @@
   export let notification: Notification;
   export let onDismiss: (id: string) => void;
 
-  let timeoutId: number | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   // Type assertion to access timeout property
   const timeout = (notification as any).timeout;

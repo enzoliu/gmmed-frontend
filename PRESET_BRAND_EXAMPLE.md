@@ -28,7 +28,6 @@
 
   function handleFiltersChange(newFilters: ProductFilters) {
     filters = newFilters;
-    console.log("篩選條件:", filters);
     // 這裡 filters.brand 會自動設定為 URL 中的品牌
   }
 </script>
