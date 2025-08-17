@@ -33,6 +33,10 @@
   } | null = null;
   let isFailedItemsDialogOpen = false;
 
+  // 拖拽相關狀態
+  let isDragOver = false;
+  let dragCounter = 0;
+
   let total = 0;
   let page = 1;
   let pageSize = 10;
@@ -364,6 +368,47 @@
     fetchSerials();
   }
 
+  // 拖拽處理函數
+  function handleDragEnter(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter++;
+    isDragOver = true;
+  }
+
+  function handleDragLeave(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter--;
+    if (dragCounter === 0) {
+      isDragOver = false;
+    }
+  }
+
+  function handleDragOver(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function handleDrop(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    isDragOver = false;
+    dragCounter = 0;
+
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      // 創建一個模擬的事件對象來重用現有的 handleFileUpload 函數
+      const mockEvent = {
+        target: {
+          files: [file],
+        },
+      } as any;
+      handleFileUpload(mockEvent);
+    }
+  }
+
   onMount(async () => {
     try {
       await fetchProducts();
@@ -660,7 +705,16 @@
     </div>
 
     <div
-      class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"
+      class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors duration-200"
+      class:border-primary={isDragOver}
+      class:bg-blue-50={isDragOver}
+      on:dragenter={handleDragEnter}
+      on:dragleave={handleDragLeave}
+      on:dragover={handleDragOver}
+      on:drop={handleDrop}
+      role="button"
+      tabindex="0"
+      aria-label="拖拽檔案到此處上傳"
     >
       <input
         type="file"
@@ -683,6 +737,12 @@
             <p class="text-sm text-muted-foreground">
               處理中... {Math.round(uploadProgress)}%
             </p>
+          </div>
+        {:else if isDragOver}
+          <div class="space-y-2">
+            <Upload class="h-8 w-8 text-primary mx-auto mb-2" />
+            <p class="text-sm text-primary font-medium">放開滑鼠來上傳檔案</p>
+            <p class="text-xs text-primary/70">支援 CSV、XLS、XLSX 格式</p>
           </div>
         {:else}
           <Upload class="h-8 w-8 text-gray-400 mx-auto mb-2" />
