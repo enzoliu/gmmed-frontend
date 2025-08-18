@@ -159,7 +159,7 @@
         <style>
           body { font-family: Arial, sans-serif; margin: 20px; }
           .qr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-          .qr-item { text-align: center; padding: 10px; border: 1px solid #ccc; }
+          .qr-item { text-align: center; padding: 10px; }
           .qr-item img { max-width: 150px; height: auto; }
           .qr-item p { margin: 5px 0; font-size: 12px; }
           @media print {
@@ -169,9 +169,6 @@
         </style>
       </head>
       <body>
-        <h1>保固 QR Code 列表</h1>
-        <p>生成時間: ${new Date().toLocaleString("zh-TW")}</p>
-        <p>總數量: ${createdWarranties.count}</p>
         <div class="qr-grid">
           ${createdWarranties.ids
             .map(
@@ -179,7 +176,7 @@
             <div class="qr-item">
               <img src="${qrCodes[index]}" alt="QR Code ${index + 1}">
               <p>ID: ${id}</p>
-              <p>序號: ${index + 1}</p>
+              <p>批號: ${index + 1}</p>
             </div>
           `
             )
