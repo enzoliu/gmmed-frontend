@@ -593,12 +593,24 @@
             <div class="flex justify-between">
               <span class="text-gray-600">保固結束:</span>
               <span>
-                {#if warranty.warranty_years === 0}
-                  <span class="text-green-600 font-semibold">終身保固</span>
+                {#if warranty.warranty_years === -1}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    永久保固
+                  </span>
+                {:else if warranty.warranty_years === 0}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    無保固
+                  </span>
                 {:else}
-                  {new Date(warranty.warranty_end_date).toLocaleDateString(
-                    "zh-TW"
-                  )}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                  >
+                    {warranty.warranty_years}年保固
+                  </span>
                 {/if}
               </span>
             </div>
@@ -683,12 +695,24 @@
                     ).toLocaleDateString("zh-TW")}
                   </div>
                   <div class="whitespace-nowrap">
-                    {#if warranty.warranty_years === 0}
-                      <span class="text-green-600 font-semibold">終身保固</span>
+                    {#if warranty.warranty_years === -1}
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                      >
+                        永久保固
+                      </span>
+                    {:else if warranty.warranty_years === 0}
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                      >
+                        無保固
+                      </span>
                     {:else}
-                      結束: {new Date(
-                        warranty.warranty_end_date
-                      ).toLocaleDateString("zh-TW")}
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                      >
+                        {warranty.warranty_years}年保固
+                      </span>
                     {/if}
                   </div>
                 </div>

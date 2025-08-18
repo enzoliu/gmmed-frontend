@@ -64,12 +64,12 @@
       id="warranty_years"
       type="number"
       bind:value={formData.warranty_years}
-      min="0"
+      min="-1"
       required
     />
     <p class="text-xs text-muted-foreground">
       <Info class="h-3 w-3 inline mr-1" />
-      輸入 0 表示終身保固，其他數字表示保固年數
+      輸入 -1 表示永久保固，0 表示無保固，其他數字表示保固年數
     </p>
   </div>
   <div class="space-y-2">

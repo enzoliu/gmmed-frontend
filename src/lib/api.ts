@@ -243,7 +243,7 @@ export interface WarrantyInfo {
   warranty_end_date: string;
   confirmation_email_sent?: boolean; // 新增：確認保固信件發送狀態
   email_sent_at?: string | null; // 新增：保固信件發送時間
-  status: 'active' | 'expired' | 'cancelled';
+  status: 'active' | 'expired' | 'cancelled' | 'pending';
   created_at: string;
   updated_at: string;
   model_number: string;
@@ -644,6 +644,49 @@ class ApiService {
 
   async listSerialsUsedByWarranty(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<SerialListResponse>> {
     return this.authedRequest<SerialListResponse>(`/api/v1/serials/used-by-warranty?${params.toString()}`);
+  }
+
+  // 保固步驟相關
+  async getWarrantyStep(warrantyId: string): Promise<ApiResponse<{ step: number }>> {
+    return this.request(`/api/v1/warranty/${warrantyId}/step`);
+  }
+
+  async verifySerial(warrantyId: string, data: {
+    product_id: string;
+    product_serial_number: string;
+    product_serial_number_2?: string;
+    surgery_date: string;
+  }): Promise<ApiResponse<any>> {
+    return this.request(`/api/v1/warranty/${warrantyId}/serial`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async getWarrantyInfo(warrantyId: string): Promise<ApiResponse<any>> {
+    return this.request(`/api/v1/warranty/${warrantyId}/info`);
+  }
+
+  async updateWarrantyInfo(warrantyId: string, data: {
+    patient_name: string;
+    is_local_identity: boolean;
+    patient_id: string;
+    patient_birth_date: string;
+    patient_phone: string;
+    patient_email: string;
+    hospital_name: string;
+    doctor_name: string;
+  }): Promise<ApiResponse<any>> {
+    return this.request(`/api/v1/warranty/${warrantyId}/info`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async confirmWarranty(warrantyId: string): Promise<ApiResponse<any>> {
+    return this.request(`/api/v1/warranty/${warrantyId}/confirmation`, {
+      method: 'PUT'
+    });
   }
 
   getCookie(name: string): string | null {

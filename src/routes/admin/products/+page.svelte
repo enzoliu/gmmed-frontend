@@ -192,10 +192,24 @@
             <div class="flex justify-between">
               <span class="text-gray-600">保固年限:</span>
               <span>
-                {#if product.warranty_years === 0}
-                  <span class="text-green-600 font-semibold">終身保固</span>
+                {#if product.warranty_years === -1}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    永久保固
+                  </span>
+                {:else if product.warranty_years === 0}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    無保固
+                  </span>
                 {:else}
-                  {product.warranty_years} 年
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                  >
+                    {product.warranty_years}年保固
+                  </span>
                 {/if}
               </span>
             </div>
@@ -274,10 +288,24 @@
               <td>{product.model_number}</td>
               <td>{product.size}</td>
               <td>
-                {#if product.warranty_years === 0}
-                  <span class="text-green-600 font-semibold">終身保固</span>
+                {#if product.warranty_years === -1}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    永久保固
+                  </span>
+                {:else if product.warranty_years === 0}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    無保固
+                  </span>
                 {:else}
-                  {product.warranty_years} 年
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                  >
+                    {product.warranty_years}年保固
+                  </span>
                 {/if}
               </td>
               <td>
