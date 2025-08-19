@@ -34,9 +34,9 @@
 >
   <div class="md:hidden relative h-16 w-full grid grid-cols-3 gap-4 mx-auto">
     <div>
-      <a href="/" class="flex items-center space-x-2 h-16">
-        <img src="/images/logo.png" alt="logo" class="w-full" />
-      </a>
+      <div
+        class="w-full h-full bg-[url(/images/logo_sm.png)] lg:bg-[url(/images/logo.png)] bg-contain bg-center bg-no-repeat"
+      ></div>
     </div>
     <div class="flex items-center justify-center">
       <span class="text-l font-bold text-white">保固管理系統</span>

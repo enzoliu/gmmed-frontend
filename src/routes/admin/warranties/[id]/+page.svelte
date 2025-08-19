@@ -1,13 +1,15 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { onMount, tick } from "svelte";
-  import { apiService, type WarrantyInfo } from "$lib/api";
+  import { apiService, type Product, type WarrantyInfo } from "$lib/api";
   import { notificationStore } from "$stores/notifications";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import WarrantyInfoDisplay from "$components/WarrantyInfoDisplay.svelte";
 
   let warranty: WarrantyInfo | null = null;
+  let product1: Product | undefined = undefined;
+  let product2: Product | undefined = undefined;
   let isLoading = true;
   let error: string | null = null;
 
@@ -18,7 +20,9 @@
       const id = page.params.id;
       const response = await apiService.getWarrantyById(id);
       if (response.data) {
-        warranty = response.data;
+        warranty = response.data.warranty_registration;
+        product1 = response.data.product1;
+        product2 = response.data.product2;
       } else {
         throw new Error(
           response.message || response.error || "找不到指定的保固資料"
@@ -50,16 +54,6 @@
       }
     }
   }
-
-  // 處理編輯後的更新
-  function handleEdit() {
-    loadWarranty();
-  }
-
-  // 處理重送信後的更新
-  function handleResend() {
-    loadWarranty();
-  }
 </script>
 
 <svelte:head>
@@ -90,12 +84,10 @@
       <!-- 使用共用組件顯示保固資訊 -->
       <WarrantyInfoDisplay
         {warranty}
-        showEditButton={true}
-        showResendButton={true}
+        {product1}
+        {product2}
         showBackButton={true}
         onBack={goBack}
-        onEdit={handleEdit}
-        onResend={handleResend}
       />
     {/if}
   </div>

@@ -146,6 +146,14 @@ export interface Serial {
   updated_at: string;
 }
 
+export interface SerialCheckState {
+  isChecking: boolean;
+  exists: boolean;
+  formatError: string | null;
+  product_id: string;
+  product_info: Product | null;
+}
+
 export interface SerialImportItem {
   index: number;
   product_id: string;
@@ -226,6 +234,12 @@ export interface WarrantyRegistration {
   surgery_date: string;
 }
 
+export interface FullWarrantyInfo {
+  warranty_registration: WarrantyInfo;
+  product1?: Product;
+  product2?: Product;
+}
+
 export interface WarrantyInfo {
   id: string;
   product_id: string;
@@ -268,6 +282,7 @@ export interface WarrantySearchResult {
  */
 export interface SerialNumberCheckResponse {
   exists: boolean;
+  product_id: string;
   message: string;
 }
 
@@ -470,6 +485,10 @@ class ApiService {
     return this.request<Product>(`/api/v1/product?${params.toString()}`);
   }
 
+  async getProductBySerialNumber(serialNumber: string): Promise<ApiResponse<Product>> {
+    return this.request<Product>(`/api/v1/product/serial?serial_number=${serialNumber}`);
+  }
+
   async createProduct(data: CreateProductRequest): Promise<ApiResponse<Product>> {
     return this.authedRequest<Product>('/api/v1/products', {
       method: 'POST',
@@ -556,8 +575,8 @@ class ApiService {
     return this.authedRequest<WarrantySearchResult>(`/api/v1/warranty/search?${params.toString()}`);
   }
 
-  async getWarrantyById(id: string): Promise<ApiResponse<WarrantyInfo>> {
-    return this.authedRequest<WarrantyInfo>(`/api/v1/warranty/${id}`);
+  async getWarrantyById(id: string): Promise<ApiResponse<FullWarrantyInfo>> {
+    return this.authedRequest<FullWarrantyInfo>(`/api/v1/warranty/${id}`);
   }
 
   async updateWarranty(id: string, data: Partial<WarrantyInfo>): Promise<ApiResponse<WarrantyInfo>> {
@@ -652,7 +671,6 @@ class ApiService {
   }
 
   async verifySerial(warrantyId: string, data: {
-    product_id: string;
     product_serial_number: string;
     product_serial_number_2?: string;
     surgery_date: string;

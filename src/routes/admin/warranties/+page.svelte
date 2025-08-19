@@ -13,7 +13,6 @@
   import Label from "$components/ui/Label.svelte";
   import Dialog from "$components/ui/Dialog.svelte";
   import { goto } from "$app/navigation";
-  import ProductFilter from "$components/ProductFilter.svelte";
   import {
     Search,
     Eye,
@@ -38,6 +37,8 @@
   // 編輯相關狀態
   let isEditDialogOpen = false;
   let editingWarranty: WarrantyInfo | null = null;
+  let editingProduct1: Product | undefined = undefined;
+  let editingProduct2: Product | undefined = undefined;
   let isSaving = false;
   let isResendingEmail = false;
 
@@ -59,11 +60,6 @@
     start_date: "",
     end_date: "",
   };
-
-  let productFilters: ProductFilters;
-
-  // 新增產品清單狀態
-  let products: Product[] = [];
 
   async function fetchWarranties() {
     isLoading = true;
@@ -256,35 +252,22 @@
       patient_birth_date: birthDate,
     };
     // get product info
-    const product = await getProductInfo(editingWarranty.product_id);
-    if (product) {
-      productFilters = {
-        brand: product.brand,
-        type: product.type,
-        model_number: product.model_number,
-        size: product.size,
-        active: "",
-      };
+    if (warranty.product_serial_number) {
+      editingProduct1 = (
+        await apiService.getProductBySerialNumber(
+          warranty.product_serial_number
+        )
+      ).data;
+    }
+    if (warranty.product_serial_number_2) {
+      editingProduct2 = (
+        await apiService.getProductBySerialNumber(
+          warranty.product_serial_number_2
+        )
+      ).data;
     }
 
     isEditDialogOpen = true;
-  }
-
-  async function updateProductFilters(filters: ProductFilters) {
-    productFilters = filters;
-
-    if (filters.type && filters.model_number && filters.size) {
-      const params = new URLSearchParams();
-      params.set("brand", filters.brand);
-      params.set("type", filters.type);
-      params.set("model_number", filters.model_number);
-      params.set("size", filters.size);
-
-      const response = await apiService.getProductByCondition(params);
-      if (response.data && editingWarranty) {
-        editingWarranty.product_id = response.data.id;
-      }
-    }
   }
 
   async function saveWarranty() {
@@ -354,19 +337,6 @@
     }
   }
 
-  async function getProductInfo(productId: string) {
-    // get product info from api
-    const response = await apiService.getProductByCondition(
-      new URLSearchParams({
-        id: productId,
-      })
-    );
-    if (response.data) {
-      return response.data;
-    }
-    return null;
-  }
-
   async function resendConfirmationEmail(warrantyId: string) {
     isResendingEmail = true;
     try {
@@ -412,11 +382,6 @@
   onMount(async () => {
     try {
       await fetchWarranties();
-      // 載入產品清單
-      const res = await apiService.getProducts();
-      if (res.data) {
-        products = res.data.products;
-      }
     } catch (error) {
       console.error("Failed to load warranties or products:", error);
     }
@@ -662,7 +627,6 @@
             <th>產品序號</th>
             <th>醫院名稱</th>
             <th>醫師姓名</th>
-            <th>保固期限</th>
             <th>狀態</th>
             <th>操作</th>
           </tr>
@@ -687,36 +651,6 @@
               </td>
               <td class="whitespace-nowrap">{warranty.hospital_name}</td>
               <td class="whitespace-nowrap">{warranty.doctor_name}</td>
-              <td>
-                <div class="text-xs">
-                  <div class="whitespace-nowrap">
-                    開始: {new Date(
-                      warranty.warranty_start_date
-                    ).toLocaleDateString("zh-TW")}
-                  </div>
-                  <div class="whitespace-nowrap">
-                    {#if warranty.warranty_years === -1}
-                      <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                      >
-                        永久保固
-                      </span>
-                    {:else if warranty.warranty_years === 0}
-                      <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                      >
-                        無保固
-                      </span>
-                    {:else}
-                      <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                      >
-                        {warranty.warranty_years}年保固
-                      </span>
-                    {/if}
-                  </div>
-                </div>
-              </td>
               <td class="whitespace-nowrap">
                 <span
                   class="px-2 py-1 rounded-full text-xs {getStatusBadgeClass(
@@ -895,18 +829,6 @@
         >
           <span>📦</span>產品資訊
         </h3>
-        <div class="grid grid-cols-1">
-          <div class="grid gap-2">
-            {#if productFilters}
-              <ProductFilter
-                bind:filters={productFilters}
-                presetBrand={productFilters.brand}
-                getAllMetadata={true}
-                onFiltersChange={(filters) => updateProductFilters(filters)}
-              />
-            {/if}
-          </div>
-        </div>
         <div class="grid grid-cols-3 gap-4">
           <div>
             <Label for="edit_product_serial_number">產品序號</Label>
