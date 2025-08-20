@@ -1,21 +1,23 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
   import {
     apiService,
     type Serial,
     type SerialCreateRequest,
     type SerialUpdateRequest,
     type Product,
+    type SerialWithWarranty,
   } from "$lib/api";
   import { notificationStore } from "$stores/notifications";
   import Button from "$components/ui/Button.svelte";
   import Dialog from "$components/ui/Dialog.svelte";
   import Label from "$components/ui/Label.svelte";
   import Input from "$components/ui/Input.svelte";
-  import { Plus, FilePenLine, Trash2, Upload } from "lucide-svelte";
+  import { Plus, FilePenLine, Trash2, Upload, Link } from "lucide-svelte";
   import SerialForm from "$components/SerialForm.svelte";
+  import { goto } from "$app/navigation";
 
-  let serials: Serial[] = [];
+  let serials: SerialWithWarranty[] = [];
   let products: Product[] = [];
   let isLoading = true;
   let isFormLoading = false;
@@ -61,6 +63,7 @@
       if (filters.product_id) params.set("product_id", filters.product_id);
 
       const response = await apiService.getSerials(params);
+
       if (response.data) {
         // 強制創建新數組並賦值 - 使用後端實際返回的字段名
         serials = response.data.serials ? [...response.data.serials] : [];
@@ -72,14 +75,12 @@
         totalPages = 1;
       }
     } catch (e: any) {
-      console.error("Error in fetchSerials:", e);
       notificationStore.error(`無法載入序號列表: ${e.message}`);
       serials = [];
       total = 0;
       totalPages = 1;
     } finally {
       isLoading = false;
-      await tick();
     }
   }
 
@@ -150,9 +151,8 @@
         notificationStore.success("序號新增成功");
       }
       closeDialog();
-      // 等待 fetchSerials 完成並強制更新
+      // 等待 fetchSerials 完成
       await fetchSerials();
-      await tick();
     } catch (e: any) {
       notificationStore.error(`儲存失敗: ${e.message}`);
     } finally {
@@ -167,9 +167,8 @@
     try {
       await apiService.deleteSerial(serialId);
       notificationStore.success("序號已刪除");
-      // 等待 fetchSerials 完成並強制更新
+      // 等待 fetchSerials 完成
       await fetchSerials();
-      await tick();
     } catch (e: any) {
       notificationStore.error(`刪除失敗: ${e.message}`);
     }
@@ -237,8 +236,6 @@
       // 從第二行開始處理資料（跳過標題行）
       const serialsData = data.slice(1).filter(validRow);
       const serialsToImport: any[] = [];
-
-      console.log("total:", serialsData.length);
 
       for (let i = 0; i < serialsData.length; i++) {
         const row = serialsData[i];
@@ -409,6 +406,10 @@
     }
   }
 
+  function goToWarranty(warrantyId: string) {
+    goto(`/admin/warranties/${warrantyId}`);
+  }
+
   onMount(async () => {
     try {
       await fetchProducts();
@@ -434,7 +435,7 @@
       </Button>
       <Button onclick={openUploadDialog}>
         <Upload class="mr-2 h-4 w-4" />
-        上傳 CSV
+        上傳 Excel
       </Button>
     </div>
   </div>
@@ -538,7 +539,7 @@
   {:else}
     <!-- 手機版卡片佈局 -->
     <div class="md:hidden space-y-4">
-      {#each serials as serial (serial.id)}
+      {#each serials as serial, index (serial.id + "_" + index)}
         <div class="border rounded-lg p-4 bg-white shadow-sm">
           <div class="flex justify-between items-start mb-3">
             <div>
@@ -601,18 +602,31 @@
             <th>序號</th>
             <th>產品類型</th>
             <th>產品型號</th>
+            <th>保固書</th>
             <th>建立時間</th>
             <th>操作</th>
           </tr>
         </thead>
         <tbody>
-          {#each serials as serial (serial.id)}
+          {#each serials as serial, index (serial.id + "_" + index)}
             <tr class="border-t [&_td]:px-4 [&_td]:py-3">
               <td class="font-medium">{serial.serial_number}</td>
               <td class="max-w-xs truncate"
                 >{getProductType(serial.product_id)}</td
               >
               <td>{getProductModelNumber(serial.product_id)}</td>
+              <td class="flex items-center">
+                {#if serial.warranty_id}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onclick={() => goToWarranty(serial.warranty_id)}
+                    class="w-9 h-9 p-0 flex items-center justify-center"
+                  >
+                    <Link class="h-4 w-4" />
+                  </Button>
+                {/if}
+              </td>
               <td class="whitespace-nowrap">
                 {new Date(serial.created_at).toLocaleDateString("zh-TW")}
               </td>
@@ -689,7 +703,7 @@
 <!-- CSV 上傳 Dialog -->
 <Dialog
   bind:isOpen={isUploadDialogOpen}
-  title="上傳 CSV 檔案"
+  title="上傳 Excel 檔案"
   onClose={closeUploadDialog}
   class="max-w-2xl"
 >
@@ -698,9 +712,12 @@
       <p>請選擇包含序號資料的 CSV、XLS 或 XLSX 檔案。</p>
       <p class="mt-2">檔案格式說明：</p>
       <ul class="mt-2 list-disc list-inside space-y-1">
-        <li>第一行：標題行（會被忽略）</li>
-        <li>第二列：產品型號（model_number，不含 dash）</li>
-        <li>第七列：完整序號（full_serial_number）</li>
+        <li>第一橫列：標題列（會被忽略）</li>
+        <li>第二直行：產品型號</li>
+        <li>
+          第七直行：完整序號（程式會自動抓取最後面的 11
+          碼轉化爲序號，無需增加欄位）
+        </li>
       </ul>
     </div>
 

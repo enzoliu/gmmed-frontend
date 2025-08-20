@@ -24,7 +24,6 @@
     Trash2,
   } from "lucide-svelte";
   import QRCode from "qrcode";
-  import type { ProductFilters } from "$lib/types";
 
   let warranties: WarrantyInfo[] = [];
   let isLoading = true;
@@ -125,7 +124,7 @@
 
     qrCodes = [];
     for (const id of createdWarranties.ids) {
-      const url = `https://warranty.gmmed.com.tw?action=register&id=${id}`;
+      const url = `https://warranty.gmmed.com.tw/warranty/register/${id}`;
       try {
         const qrCodeDataUrl = await QRCode.toDataURL(url, {
           width: 200,

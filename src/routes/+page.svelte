@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { Mail, Phone, MapPin, Shield, Award, Users } from "lucide-svelte";
+  import { Shield, Award, Users } from "lucide-svelte";
 
   let redirecting = false;
 
@@ -37,7 +37,7 @@
     >
       <div class="p-8">
         <div class="text-center mb-8">
-          <h1 class="text-4xl font-bold mb-4 text-gray-800">Grand Medical</h1>
+          <h1 class="text-4xl font-bold mb-4 text-gray-800">GRAND Medical</h1>
           <p class="text-xl text-gray-600 mb-6">
             菁英群聚，與您齊心開創偉大鉅業，洞見壯麗未來。
           </p>

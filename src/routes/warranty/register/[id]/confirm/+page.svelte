@@ -134,12 +134,7 @@
         </p>
 
         <!-- 使用共用組件顯示保固資訊，隱藏編輯和重送信功能 -->
-        <WarrantyInfoDisplay
-          warranty={warrantyInfo}
-          showEditButton={false}
-          showResendButton={false}
-          showBackButton={false}
-        />
+        <WarrantyInfoDisplay warranty={warrantyInfo} showBackButton={false} />
 
         <!-- 確認按鈕 -->
         <div class="flex justify-center mt-8">

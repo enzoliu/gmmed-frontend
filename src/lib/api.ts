@@ -1,6 +1,4 @@
-import { get } from 'svelte/store';
 import { browser } from '$app/environment';
-import { authStore } from '$stores/auth'; // We will create this store next
 import { config } from '$lib/env';
 
 /**
@@ -146,6 +144,10 @@ export interface Serial {
   updated_at: string;
 }
 
+export interface SerialWithWarranty extends Serial {
+  warranty_id: string;
+}
+
 export interface SerialCheckState {
   isChecking: boolean;
   exists: boolean;
@@ -193,6 +195,14 @@ export interface SerialUpdateRequest {
 
 export interface SerialListResponse {
   serials: Serial[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface SerialListResponseWithWarranty {
+  serials: SerialWithWarranty[];
   total: number;
   page: number;
   page_size: number;
@@ -606,8 +616,8 @@ class ApiService {
   }
 
   // Serial management methods
-  async getSerials(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<SerialListResponse>> {
-    return this.authedRequest<SerialListResponse>(`/api/v1/serials?${params.toString()}`);
+  async getSerials(params: URLSearchParams = new URLSearchParams()): Promise<ApiResponse<SerialListResponseWithWarranty>> {
+    return this.authedRequest<SerialListResponseWithWarranty>(`/api/v1/serials?${params.toString()}`);
   }
 
   async getSerialById(id: string): Promise<ApiResponse<Serial>> {

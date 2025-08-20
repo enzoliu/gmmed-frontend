@@ -6,11 +6,9 @@
   import Button from "$components/ui/Button.svelte";
   import Input from "$components/ui/Input.svelte";
   import Label from "$components/ui/Label.svelte";
-  import { Loader2, User, Send } from "lucide-svelte";
-  import { notificationStore } from "$stores/notifications";
+  import { Loader2, Send } from "lucide-svelte";
 
   let warrantyId = "";
-  let isLoading = false;
   let error: string | null = null;
   let isSubmitting = false;
 
@@ -60,8 +58,6 @@
     }
     if (!formData.patient_phone.trim()) {
       errors.patient_phone = "請輸入聯絡電話";
-    } else if (!/^09\d{8}$/.test(formData.patient_phone.trim())) {
-      errors.patient_phone = "手機號碼格式不正確";
     }
     if (!formData.patient_email.trim()) {
       errors.patient_email = "請輸入電子郵件";
