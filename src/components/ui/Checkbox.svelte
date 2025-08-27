@@ -9,16 +9,25 @@
   type $$Props = {
     checked?: boolean;
     class?: string;
+    onCheckedChange?: (checked: boolean) => void;
   } & import("svelte/elements").HTMLInputAttributes;
 
   export let checked: $$Props["checked"] = undefined;
+  export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
   let className: $$Props["class"] = undefined;
   export { className as class };
+
+  function handleChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    checked = target.checked;
+    onCheckedChange?.(checked);
+  }
 </script>
 
 <input
   type="checkbox"
-  bind:checked
+  {checked}
   class={checkboxVariants({ class: className })}
+  on:change={handleChange}
   {...$$restProps}
 />

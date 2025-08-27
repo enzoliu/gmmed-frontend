@@ -150,7 +150,10 @@
 <div>
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold">使用者列表</h2>
-    <Button onclick={openCreateForm}>
+    <Button
+      onclick={openCreateForm}
+      class="text-mentor-white bg-mentor-primary hover:text-mentor-primary hover:bg-mentor-white hover:border-mentor-primary border"
+    >
       <Plus class="mr-2 h-4 w-4" />
       新增使用者
     </Button>

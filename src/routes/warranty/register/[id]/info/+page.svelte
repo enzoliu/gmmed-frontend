@@ -7,6 +7,9 @@
   import Input from "$components/ui/Input.svelte";
   import Label from "$components/ui/Label.svelte";
   import { Loader2, Send } from "lucide-svelte";
+  import Cleave from "cleave.js";
+  import "cleave.js/dist/addons/cleave-phone.tw";
+  import Stepper from "../components/stepper.svelte";
 
   let warrantyId = "";
   let error: string | null = null;
@@ -177,6 +180,11 @@
       .toISOString()
       .split("T")[0];
 
+    new Cleave("#patient_phone", {
+      phone: true,
+      phoneRegionCode: "tw",
+    });
+
     // 載入現有資訊
     await loadExistingInfo();
   });
@@ -185,16 +193,16 @@
 <svelte:head>
   <title>保固註冊 - 填寫資訊</title>
 </svelte:head>
-
+<Stepper step={3} />
 <div class="container mx-auto max-w-3xl py-8 px-4">
   <div
-    class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-white/20"
+    class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-mentor-gray"
   >
     <div class="p-8">
-      <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
-        保固註冊 - 第二步：填寫資訊
+      <h1 class="text-xl font-bold mb-2 text-center text-gray-800">
+        保固註冊 - 填寫資訊
       </h1>
-      <p class="text-center text-gray-600 mb-6">
+      <p class="text-xs text-center text-gray-600 mb-6">
         請填寫您的個人資訊和醫療院所資訊
       </p>
 
@@ -315,7 +323,7 @@
               <Input
                 id="patient_phone"
                 value={formData.patient_phone}
-                type="tel"
+                inputmode="numeric"
                 required
                 on:input={(e) =>
                   (formData.patient_phone = (
@@ -412,7 +420,12 @@
 
         <!-- 提交按鈕 -->
         <div class="flex justify-center">
-          <Button type="button" disabled={isSubmitting} onclick={submitForm}>
+          <Button
+            type="button"
+            disabled={isSubmitting}
+            onclick={submitForm}
+            class="text-mentor-white bg-mentor-primary hover:bg-mentor-white hover:text-mentor-primary hover:border-mentor-primary hover:border"
+          >
             {#if isSubmitting}
               <Loader2 class="mr-2 h-4 w-4 animate-spin" />
               提交中...

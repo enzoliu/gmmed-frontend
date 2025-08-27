@@ -3,15 +3,16 @@
   import Button from "$components/ui/Button.svelte";
   import Label from "$components/ui/Label.svelte";
   import Input from "$components/ui/Input.svelte";
-  import ProductFilter from "$components/ProductFilter.svelte";
   import { extractSerialNumber, isValidFullSerialLength } from "$utils/serial";
   import type {
     Serial,
     SerialCreateRequest,
     SerialUpdateRequest,
     ProductFilters,
+    ProductFiltersOnchangeData,
   } from "$lib/types";
-  import { apiService, type Product } from "$lib/api";
+  import { type Product } from "$lib/api";
+  import ProductFilter from "./ProductFilter.svelte";
 
   // Props
   export let serial: Serial | null = null;
@@ -32,11 +33,9 @@
   };
 
   let productFilters: ProductFilters = {
-    brand: "Mentor",
-    type: "",
-    model_number: "",
+    category: "",
+    subcategory: "",
     size: "",
-    active: "",
   };
 
   // Initialize form data when serial changes
@@ -51,32 +50,27 @@
     if (serial.product_id) {
       const product = products.find((p) => p.id === serial.product_id);
       if (product) {
+        const splittedType = product.type.split("-");
         productFilters = {
-          brand: "Mentor",
-          type: product.type,
-          model_number: product.model_number,
+          category: splittedType.slice(0, splittedType.length - 1).join("-"),
+          subcategory: splittedType[splittedType.length - 1],
           size: product.size,
-          active: product.is_active ? "true" : "false",
         };
       }
     } else {
       productFilters = {
-        brand: "Mentor",
-        type: "",
-        model_number: "",
+        category: "",
+        subcategory: "",
         size: "",
-        active: "",
       };
     }
   } else {
     // Reset form for new serial
     formData = { serial_number: "", full_serial_number: "", product_id: "" };
     productFilters = {
-      brand: "Mentor",
-      type: "",
-      model_number: "",
+      category: "",
+      subcategory: "",
       size: "",
-      active: "",
     };
   }
 
@@ -95,24 +89,10 @@
   }
 
   // Handle product filter changes
-  async function handleProductFilterChange(filters: ProductFilters) {
-    productFilters = filters;
-
-    // Find product ID based on filter criteria
-    if (filters.type && filters.model_number && filters.size) {
-      const product = products.find(
-        (p) =>
-          p.brand === "Mentor" &&
-          p.type === filters.type &&
-          p.model_number === filters.model_number &&
-          p.size === filters.size
-      );
-      if (product) {
-        formData.product_id = product.id;
-      }
-    } else {
-      formData.product_id = "";
-    }
+  async function handleProductFilterChange(
+    filters: ProductFiltersOnchangeData
+  ) {
+    formData.product_id = filters.product_id;
   }
 
   // Handle form submission
@@ -187,10 +167,8 @@
     <Label>產品選擇 *</Label>
     <div class="border rounded-lg p-4 bg-muted/30">
       <ProductFilter
-        bind:filters={productFilters}
-        getAllMetadata={true}
+        bind:productFilters
         onFiltersChange={handleProductFilterChange}
-        presetBrand="Mentor"
       />
     </div>
     {#if !formData.product_id}

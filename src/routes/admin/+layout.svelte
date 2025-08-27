@@ -51,12 +51,19 @@
           class:font-semibold={page.url.pathname.startsWith(
             "/admin/warranties"
           )}
-          class:bg-gold-100={page.url.pathname.startsWith("/admin/warranties")}
-          class:text-primary={page.url.pathname.startsWith("/admin/warranties")}
-          class:hover:bg-gold-50={!page.url.pathname.startsWith(
+          class:bg-mentor-lightblue={page.url.pathname.startsWith(
             "/admin/warranties"
           )}
-          class:text-gray-700={!page.url.pathname.startsWith(
+          class:text-mentor-white={page.url.pathname.startsWith(
+            "/admin/warranties"
+          )}
+          class:hover:bg-mentor-lightblue={!page.url.pathname.startsWith(
+            "/admin/warranties"
+          )}
+          class:hover:text-mentor-white={!page.url.pathname.startsWith(
+            "/admin/warranties"
+          )}
+          class:text-mentor-primary={!page.url.pathname.startsWith(
             "/admin/warranties"
           )}
         >
@@ -66,12 +73,21 @@
           href="/admin/products"
           class="px-4 py-2 rounded-lg transition-colors"
           class:font-semibold={page.url.pathname.startsWith("/admin/products")}
-          class:bg-gold-100={page.url.pathname.startsWith("/admin/products")}
-          class:text-primary={page.url.pathname.startsWith("/admin/products")}
-          class:hover:bg-gold-50={!page.url.pathname.startsWith(
+          class:bg-mentor-lightblue={page.url.pathname.startsWith(
             "/admin/products"
           )}
-          class:text-gray-700={!page.url.pathname.startsWith("/admin/products")}
+          class:text-mentor-white={page.url.pathname.startsWith(
+            "/admin/products"
+          )}
+          class:hover:bg-mentor-lightblue={!page.url.pathname.startsWith(
+            "/admin/products"
+          )}
+          class:hover:text-mentor-white={!page.url.pathname.startsWith(
+            "/admin/products"
+          )}
+          class:text-mentor-primary={!page.url.pathname.startsWith(
+            "/admin/products"
+          )}
         >
           產品管理
         </a>
@@ -79,12 +95,21 @@
           href="/admin/serials"
           class="px-4 py-2 rounded-lg transition-colors"
           class:font-semibold={page.url.pathname.startsWith("/admin/serials")}
-          class:bg-gold-100={page.url.pathname.startsWith("/admin/serials")}
-          class:text-primary={page.url.pathname.startsWith("/admin/serials")}
-          class:hover:bg-gold-50={!page.url.pathname.startsWith(
+          class:bg-mentor-lightblue={page.url.pathname.startsWith(
             "/admin/serials"
           )}
-          class:text-gray-700={!page.url.pathname.startsWith("/admin/serials")}
+          class:text-mentor-white={page.url.pathname.startsWith(
+            "/admin/serials"
+          )}
+          class:hover:bg-mentor-lightblue={!page.url.pathname.startsWith(
+            "/admin/serials"
+          )}
+          class:hover:text-mentor-white={!page.url.pathname.startsWith(
+            "/admin/serials"
+          )}
+          class:text-mentor-primary={!page.url.pathname.startsWith(
+            "/admin/serials"
+          )}
         >
           序號管理
         </a>
@@ -93,12 +118,21 @@
             href="/admin/users"
             class="px-4 py-2 rounded-lg transition-colors"
             class:font-semibold={page.url.pathname.startsWith("/admin/users")}
-            class:bg-gold-100={page.url.pathname.startsWith("/admin/users")}
-            class:text-primary={page.url.pathname.startsWith("/admin/users")}
-            class:hover:bg-gold-50={!page.url.pathname.startsWith(
+            class:bg-mentor-lightblue={page.url.pathname.startsWith(
               "/admin/users"
             )}
-            class:text-gray-700={!page.url.pathname.startsWith("/admin/users")}
+            class:text-mentor-white={page.url.pathname.startsWith(
+              "/admin/users"
+            )}
+            class:hover:bg-mentor-lightblue={!page.url.pathname.startsWith(
+              "/admin/users"
+            )}
+            class:hover:text-mentor-white={!page.url.pathname.startsWith(
+              "/admin/users"
+            )}
+            class:text-mentor-primary={!page.url.pathname.startsWith(
+              "/admin/users"
+            )}
           >
             使用者管理
           </a>
@@ -106,12 +140,21 @@
             href="/admin/audit"
             class="px-4 py-2 rounded-lg transition-colors"
             class:font-semibold={page.url.pathname.startsWith("/admin/audit")}
-            class:bg-gold-100={page.url.pathname.startsWith("/admin/audit")}
-            class:text-primary={page.url.pathname.startsWith("/admin/audit")}
-            class:hover:bg-gold-50={!page.url.pathname.startsWith(
+            class:bg-mentor-lightblue={page.url.pathname.startsWith(
               "/admin/audit"
             )}
-            class:text-gray-700={!page.url.pathname.startsWith("/admin/audit")}
+            class:text-mentor-white={page.url.pathname.startsWith(
+              "/admin/audit"
+            )}
+            class:hover:bg-mentor-lightblue={!page.url.pathname.startsWith(
+              "/admin/audit"
+            )}
+            class:hover:text-mentor-white={!page.url.pathname.startsWith(
+              "/admin/audit"
+            )}
+            class:text-mentor-primary={!page.url.pathname.startsWith(
+              "/admin/audit"
+            )}
           >
             審計日誌
           </a>

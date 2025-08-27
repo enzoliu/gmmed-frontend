@@ -138,6 +138,7 @@ export interface AuditLogListResponse {
 export interface Serial {
   id: string;
   serial_number: string;
+  checksum: string;
   full_serial_number: string;
   product_id: string | null;
   created_at: string;
@@ -152,6 +153,8 @@ export interface SerialCheckState {
   isChecking: boolean;
   exists: boolean;
   formatError: string | null;
+  serial_number: string;
+  checksum: string;
   product_id: string;
   product_info: Product | null;
 }
@@ -602,10 +605,7 @@ class ApiService {
     });
   }
 
-  async checkSerialNumber(serialNumber: string, warrantyID: string, customFetch?: typeof fetch): Promise<ApiResponse<SerialNumberCheckResponse>> {
-    const params = new URLSearchParams();
-    params.set('serial_number', serialNumber);
-    params.set('warranty_id', warrantyID);
+  async checkSerialNumber(params: URLSearchParams = new URLSearchParams(), customFetch?: typeof fetch): Promise<ApiResponse<SerialNumberCheckResponse>> {
     return this.request(`/api/v1/warranty/check-serial?${params.toString()}`, {}, customFetch);
   }
 
@@ -684,6 +684,8 @@ class ApiService {
     product_serial_number: string;
     product_serial_number_2?: string;
     surgery_date: string;
+    checksum: string;
+    checksum2?: string;
   }): Promise<ApiResponse<any>> {
     return this.request(`/api/v1/warranty/${warrantyId}/serial`, {
       method: 'PUT',

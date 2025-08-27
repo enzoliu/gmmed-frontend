@@ -43,19 +43,19 @@
 
 <div class="container mx-auto max-w-2xl py-8 px-4">
   <div
-    class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-white/20"
+    class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-mentor-primary"
   >
     <div class="p-8 text-center">
-      <Shield class="h-24 w-24 text-blue-600 mx-auto mb-6" />
+      <Shield class="h-24 w-24 text-mentor-primary mx-auto mb-6" />
 
-      <h1 class="text-3xl font-bold mb-4 text-gray-800">產品序號已驗證</h1>
+      <h1 class="text-3xl font-bold mb-8 text-gray-800">產品序號已驗證</h1>
 
-      <p class="text-lg text-gray-600 mb-8">您的產品序號已成功驗證。</p>
-
-      <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-        <div class="flex items-center justify-center gap-3 mb-3">
-          <CheckCircle class="h-6 w-6 text-green-600" />
-          <h2 class="text-lg font-semibold text-green-800">驗證通過</h2>
+      <div
+        class="bg-mentor-darkblue border border-mentor-primary rounded-lg p-6 mb-8"
+      >
+        <div class="flex items-center justify-center gap-3">
+          <CheckCircle class="h-6 w-6 text-mentor-white" />
+          <h2 class="text-lg font-semibold text-mentor-white">驗證通過</h2>
         </div>
       </div>
     </div>

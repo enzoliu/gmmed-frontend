@@ -84,8 +84,8 @@
     <!-- 頁面標題 -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold">保固詳細資料</h1>
-        <p class="font-mono text-sm text-muted-foreground">
+        <h1 class="text-xl font-bold">保固詳細資料</h1>
+        <p class="font-mono text-xs text-muted-foreground">
           ID: {warranty.id}
         </p>
       </div>
@@ -103,7 +103,7 @@
     </div>
 
     <!-- 患者資訊 -->
-    <div class="rounded-lg border bg-white p-6 shadow-sm">
+    <div class="rounded-lg border bg-white p-6 shadow-sm border-mentor-gray">
       <h2 class="mb-4 flex items-center text-xl font-semibold">
         <User class="mr-3 h-5 w-5 text-primary" />
         患者資訊
@@ -137,10 +137,12 @@
     <!-- 手術與產品資訊 -->
     <div class="grid gap-8 md:grid-cols-2">
       {#if product1}
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div
+          class="rounded-lg border bg-white p-6 shadow-sm border-mentor-gray"
+        >
           <h2 class="mb-4 flex items-center text-xl font-semibold">
             <Package class="mr-3 h-5 w-5 text-primary" />
-            產品資訊 - 第一個植入體
+            植入體資訊（一）
           </h2>
           <div class="space-y-4">
             <div>
@@ -161,7 +163,7 @@
               <p class="font-medium">
                 {#if product1.warranty_years === -1}
                   <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-mentor-teal text-mentor-white"
                   >
                     永久保固
                   </span>
@@ -173,7 +175,7 @@
                   </span>
                 {:else}
                   <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-mentor-primary"
                   >
                     {product1.warranty_years}年保固
                   </span>
@@ -184,10 +186,12 @@
         </div>
       {/if}
       {#if product2}
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div
+          class="rounded-lg border bg-white p-6 shadow-sm border-mentor-gray"
+        >
           <h2 class="mb-4 flex items-center text-xl font-semibold">
             <Package class="mr-3 h-5 w-5 text-primary" />
-            產品資訊 - 第二個植入體
+            植入體資訊（二）
           </h2>
           <div class="space-y-4">
             <div>
@@ -208,7 +212,7 @@
               <p class="font-medium">
                 {#if product2.warranty_years === -1}
                   <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-mentor-teal text-mentor-white"
                   >
                     永久保固
                   </span>
@@ -220,7 +224,7 @@
                   </span>
                 {:else}
                   <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-mentor-primary"
                   >
                     {product2.warranty_years}年保固
                   </span>
@@ -230,7 +234,9 @@
           </div>
         </div>
       {:else}
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div
+          class="rounded-lg border bg-white p-6 shadow-sm border-mentor-gray"
+        >
           <h2 class="mb-4 flex items-center text-xl font-semibold">
             <Building class="mr-3 h-5 w-5 text-primary" />
             手術資訊
@@ -255,7 +261,7 @@
 
     <!-- 如果產品資訊有兩個，則手術資訊顯示在這-->
     {#if product1 && product2}
-      <div class="rounded-lg border bg-white p-6 shadow-sm">
+      <div class="rounded-lg border bg-white p-6 shadow-sm border-mentor-gray">
         <h2 class="mb-4 flex items-center text-xl font-semibold">
           <Building class="mr-3 h-5 w-5 text-primary" />
           手術資訊
@@ -278,7 +284,7 @@
     {/if}
 
     <!-- 保固期限 -->
-    <div class="rounded-lg border bg-white p-6 shadow-sm">
+    <div class="rounded-lg border bg-white p-6 shadow-sm border-mentor-gray">
       <h2 class="mb-4 flex items-center text-xl font-semibold">
         <ShieldCheck class="mr-3 h-5 w-5 text-primary" />
         保固期限
@@ -295,7 +301,7 @@
           <p class="text-sm text-muted-foreground">保固到期日</p>
           <p class="text-lg font-medium text-primary">
             {#if isLifeTimeWarranty()}
-              <span class="font-semibold text-green-600">終身保固</span>
+              <span class="font-semibold text-mentor-teal">終身保固</span>
             {:else}
               {formatDate(warranty.warranty_end_date)}
             {/if}
@@ -305,14 +311,14 @@
     </div>
 
     <!-- 按鈕區塊 -->
-    <div class="flex items-center justify-between pt-8">
-      <!-- 左側返回按鈕 -->
-      {#if showBackButton}
+    {#if showBackButton}
+      <div class="flex items-center justify-between pt-8">
+        <!-- 左側返回按鈕 -->
         <Button variant="default" onclick={handleBack}>
           <ArrowLeft class="mr-2 h-4 w-4" />
           返回列表
         </Button>
-      {/if}
-    </div>
+      </div>
+    {/if}
   </div>
 {/if}

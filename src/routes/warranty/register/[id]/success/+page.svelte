@@ -43,24 +43,24 @@
 
 <div class="container mx-auto max-w-2xl py-8 px-4">
   <div
-    class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-white/20"
+    class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-mentor-gray"
   >
     <div class="p-8 text-center">
-      <CheckCircle class="h-24 w-24 text-green-600 mx-auto mb-6" />
+      <CheckCircle class="h-24 w-24 text-mentor-teal mx-auto mb-6" />
 
-      <h1 class="text-3xl font-bold mb-4 text-gray-800">保固註冊完成</h1>
+      <h1 class="text-xl font-bold mb-2 text-gray-800">保固註冊完成</h1>
 
-      <p class="text-sm md:text-base text-gray-600 mb-8">
+      <p class="text-sm text-mentor-gray mb-8">
         您的保固已成功註冊，確認信件將發送至您的電子信箱。
       </p>
 
-      <div class="bg-white border border-blue-200 rounded-lg p-6 mb-8">
+      <div class="bg-white border border-mentor-primary rounded-lg p-6 mb-8">
         <div class="flex items-center justify-center gap-3 mb-3">
-          <Mail class="h-6 w-6 text-blue-600" />
-          <h2 class="text-lg font-semibold text-blue-800">重要提醒</h2>
+          <Mail class="h-6 w-6 text-mentor-primary" />
+          <h2 class="text-lg font-semibold text-mentor-primary">重要提醒</h2>
         </div>
         <ul
-          class="text-left text-xs md:text-sm text-blue-700 space-y-2 inline-block"
+          class="text-left text-xs md:text-sm text-mentor-primary space-y-2 inline-block"
         >
           <li>• 請檢查您的電子信箱，確認信件是否收到</li>
           <li>• 如未收到信件，請檢查垃圾郵件資料夾</li>

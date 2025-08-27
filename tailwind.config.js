@@ -12,6 +12,16 @@ export default {
     },
     extend: {
       colors: {
+        mentor: {
+          primary: '#004B8D',
+          white: '#FFFFFF',
+          gray: '#86898C',
+          darkgray: '#4D4D4F',
+          teal: '#65C7C6',
+          lightblue: '#80A3B7',
+          purple: '#7A69AF',
+          darkblue: '#1D427C',
+        },
         // 偉鉅股份有限公司品牌色彩
         gmmed: {
           50: '#f0f4f8',    // 淺藍灰背景

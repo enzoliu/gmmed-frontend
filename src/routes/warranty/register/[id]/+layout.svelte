@@ -5,7 +5,7 @@
   import { apiService } from "$lib/api";
   import { Loader2, AlertCircle } from "lucide-svelte";
 
-  let currentStep = 0;
+  let currentStep = 4;
   let isLoading = true;
   let error: string | null = null;
   let warrantyId = "";

@@ -24,6 +24,7 @@
     Trash2,
   } from "lucide-svelte";
   import QRCode from "qrcode";
+  import Checkbox from "$components/ui/Checkbox.svelte";
 
   let warranties: WarrantyInfo[] = [];
   let isLoading = true;
@@ -58,6 +59,8 @@
     status: "",
     start_date: "",
     end_date: "",
+    search_deleted: false,
+    step: "3",
   };
 
   async function fetchWarranties() {
@@ -79,6 +82,9 @@
       if (filters.status) params.set("status", filters.status);
       if (filters.start_date) params.set("start_date", filters.start_date);
       if (filters.end_date) params.set("end_date", filters.end_date);
+      if (filters.search_deleted)
+        params.set("search_deleted", filters.search_deleted.toString());
+      if (filters.step) params.set("step", filters.step);
 
       const response = await apiService.searchWarranty(params);
       if (response.data) {
@@ -152,14 +158,63 @@
       <head>
         <title>保固 QR Code</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          .qr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-          .qr-item { text-align: center; padding: 10px; }
-          .qr-item img { max-width: 150px; height: auto; }
-          .qr-item p { margin: 5px 0; font-size: 12px; }
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+          }
+
+          .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 52.5mm);
+            gap: 0; /* 沒有間隔剛好貼齊標籤紙 */
+            justify-content: center;
+            align-content: start;
+            padding: 0;
+            margin: 0;
+          }
+
+          .qr-item {
+            width: 52.5mm;
+            height: 37.1mm;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            break-inside: avoid;
+          }
+
+          .qr-item img {
+            width: 30mm;
+            height: 30mm;
+            object-fit: contain;
+            margin: 0 auto;
+          }
+
+          .qr-item p {
+            margin: 0;
+            font-size: 8px;
+          }
+
           @media print {
-            .qr-grid { grid-template-columns: repeat(3, 1fr); }
-            .qr-item { break-inside: avoid; }
+            body {
+              margin: 0;
+            }
+
+            .qr-grid {
+              page-break-inside: avoid;
+            }
+
+            .qr-item {
+              page-break-inside: avoid;
+            }
+          }
+          @page {
+            size: A4;
+            margin: 0;
           }
         </style>
       </head>
@@ -171,7 +226,6 @@
             <div class="qr-item">
               <img src="${qrCodes[index]}" alt="QR Code ${index + 1}">
               <p>ID: ${id}</p>
-              <p>批號: ${index + 1}</p>
             </div>
           `
             )
@@ -223,6 +277,8 @@
       status: "",
       start_date: "",
       end_date: "",
+      search_deleted: false,
+      step: "3",
     };
     handleFilterChange();
   }
@@ -395,7 +451,10 @@
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold">保固管理</h2>
     <div class="flex gap-2">
-      <Button onclick={() => (isBatchCreateDialogOpen = true)}>
+      <Button
+        onclick={() => (isBatchCreateDialogOpen = true)}
+        class="text-mentor-white bg-mentor-primary hover:text-mentor-primary hover:bg-mentor-white hover:border-mentor-primary border"
+      >
         <Plus class="mr-2 h-4 w-4" />
         批次創建保固
       </Button>
@@ -467,7 +526,7 @@
       </div>
     </div>
     <div class="p-4 border rounded-lg mb-6 bg-muted/30">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div>
           <Label for="start_date_filter">手術日期範圍：起</Label>
           <Input
@@ -487,20 +546,30 @@
           />
         </div>
         <div>
-          <Label for="status_filter">保固狀態</Label>
+          <Label for="status_filter">保固填寫狀態</Label>
           <select
             id="status_filter"
-            bind:value={filters.status}
+            bind:value={filters.step}
             onchange={handleFilterChange}
             class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
           >
-            <option value="">全部</option>
-            <option value="active">有效</option>
-            <option value="expired">已過期</option>
-            <option value="cancelled">已取消</option>
+            <option value="-1">全部</option>
+            <option value="1">序號已驗證，尚未填患者資料</option>
+            <option value="2">患者資料未完成</option>
+            <option value="3">保固已成立</option>
+            <option value="9">已驗證-正貨無保固</option>
           </select>
         </div>
-        <div class="flex items-end">
+        <div class="flex items-center justify-center">
+          <Checkbox
+            id="search_deleted"
+            class="mr-2"
+            bind:checked={filters.search_deleted}
+            onCheckedChange={handleFilterChange}
+          />
+          <Label for="search_deleted">僅列出已刪除的保固</Label>
+        </div>
+        <div class="flex items-center">
           <Button variant="ghost" onclick={clearFilters}>清除篩選</Button>
         </div>
       </div>

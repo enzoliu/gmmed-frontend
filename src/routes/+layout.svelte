@@ -4,6 +4,7 @@
   import NotificationContainer from "$components/NotificationContainer.svelte";
   import Header from "$components/Header.svelte";
   import "../app.css";
+  import Footer from "$components/Footer.svelte";
 
   const { children } = $props();
 
@@ -28,10 +29,7 @@
 </script>
 
 <!-- 全版面背景容器 -->
-<div
-  class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed relative"
-  style="background-image: url('/images/backgrounds/bg01.jpg')"
->
+<div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed relative">
   <!-- 內容容器 -->
   <div class="relative z-10">
     <NotificationContainer />
@@ -43,3 +41,4 @@
     </main>
   </div>
 </div>
+<Footer />

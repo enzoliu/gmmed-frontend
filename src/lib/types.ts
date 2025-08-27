@@ -1,25 +1,22 @@
 // src/lib/types.ts
 
 export interface ProductFilters {
-  brand: string;
-  type: string;
-  model_number: string;
-  size: string;
-  active: string;
-}
-
-export interface PatientProductFilters {
-  brand: string;
   category: string;
   subcategory: string;
   size: string;
 }
 
-export interface ProductFilterProps {
-  filters: ProductFilters;
-  presetBrand?: string;
-  getAllMetadata?: boolean;
+export interface ProductFiltersOnchangeData {
+  type: string;
+  size: string;
+  product_id: string;
 }
+
+export interface TypeCategorySubcategory{
+  category: string;
+  subcategory: string;
+}
+
 
 // Serial related types
 export interface Serial {

@@ -6,6 +6,7 @@
   import Button from "$components/ui/Button.svelte";
   import WarrantyInfoDisplay from "$components/WarrantyInfoDisplay.svelte";
   import { Loader2, CheckCircle, AlertCircle } from "lucide-svelte";
+  import Stepper from "../components/stepper.svelte";
 
   let warrantyId = "";
   let isLoading = true;
@@ -98,7 +99,7 @@
 <svelte:head>
   <title>保固註冊 - 確認資訊</title>
 </svelte:head>
-
+<Stepper step={4} />
 <div class="container mx-auto max-w-4xl py-8 px-4">
   {#if isLoading}
     <div class="min-h-screen flex items-center justify-center">
@@ -126,10 +127,10 @@
       class="bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-white/20"
     >
       <div class="p-8">
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
-          保固註冊 - 第三步：確認資訊
+        <h1 class="text-xl font-bold mb-2 text-center text-gray-800">
+          保固註冊 - 確認資訊
         </h1>
-        <p class="text-center text-gray-600 mb-8">
+        <p class="text-xs text-center text-gray-600 mb-8">
           請確認以下資訊是否正確，確認後將無法修改
         </p>
 
@@ -142,6 +143,7 @@
             type="button"
             disabled={isSubmitting}
             onclick={confirmWarranty}
+            class="text-mentor-white bg-mentor-primary hover:bg-mentor-white hover:text-mentor-primary hover:border-mentor-primary hover:border"
           >
             {#if isSubmitting}
               <Loader2 class="mr-2 h-4 w-4 animate-spin" />

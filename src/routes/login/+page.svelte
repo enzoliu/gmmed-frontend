@@ -48,7 +48,7 @@
 
 <div class="flex items-center justify-center py-12">
   <div
-    class="mx-auto grid w-[350px] gap-6 p-8 bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-white/20"
+    class="mx-auto grid w-[350px] gap-6 p-8 bg-white/60 backdrop-blur-md rounded-xl shadow-2xl border border-mentor-primary"
   >
     <div class="grid gap-2 text-center">
       <h1 class="text-3xl font-bold">登入</h1>
@@ -80,7 +80,11 @@
       {#if error}
         <p class="text-sm text-destructive">{error}</p>
       {/if}
-      <Button type="submit" class="mx-auto w-1/2 mt-4" disabled={isLoading}>
+      <Button
+        type="submit"
+        class="mx-auto w-1/2 mt-4 text-mentor-white bg-mentor-primary hover:bg-mentor-white hover:text-mentor-primary hover:border-mentor-primary hover:border"
+        disabled={isLoading}
+      >
         {#if isLoading}
           <Loader2 class="mr-2 h-4 w-4 animate-spin"></Loader2>
           登入中...

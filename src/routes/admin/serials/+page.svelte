@@ -16,6 +16,8 @@
   import { Plus, FilePenLine, Trash2, Upload, Link } from "lucide-svelte";
   import SerialForm from "$components/SerialForm.svelte";
   import { goto } from "$app/navigation";
+  import type { ProductFilters, ProductFiltersOnchangeData } from "$lib/types";
+  import ProductFilter from "$components/ProductFilter.svelte";
 
   let serials: SerialWithWarranty[] = [];
   let products: Product[] = [];
@@ -34,6 +36,11 @@
     failed_items?: any[];
   } | null = null;
   let isFailedItemsDialogOpen = false;
+  let productFilters: ProductFilters = {
+    category: "",
+    subcategory: "",
+    size: "",
+  };
 
   // 拖拽相關狀態
   let isDragOver = false;
@@ -48,6 +55,7 @@
     serial_number: "",
     full_serial_number: "",
     product_id: "",
+    product_type: "",
   };
 
   async function fetchSerials() {
@@ -61,6 +69,8 @@
       if (filters.full_serial_number)
         params.set("full_serial_number", filters.full_serial_number);
       if (filters.product_id) params.set("product_id", filters.product_id);
+      if (filters.product_type)
+        params.set("product_type", filters.product_type);
 
       const response = await apiService.getSerials(params);
 
@@ -101,7 +111,12 @@
   }
 
   function clearFilters() {
-    filters = { serial_number: "", full_serial_number: "", product_id: "" };
+    filters = {
+      serial_number: "",
+      full_serial_number: "",
+      product_id: "",
+      product_type: "",
+    };
     handleFilterChange();
   }
 
@@ -410,6 +425,12 @@
     goto(`/admin/warranties/${warrantyId}`);
   }
 
+  async function handleProductFilterChange(data: ProductFiltersOnchangeData) {
+    filters.product_type = data.type;
+    filters.product_id = data.product_id;
+    handleFilterChange();
+  }
+
   onMount(async () => {
     try {
       await fetchProducts();
@@ -429,11 +450,18 @@
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold">序號列表</h2>
     <div class="flex gap-2">
-      <Button variant="outline" onclick={openCreateForm}>
+      <Button
+        variant="outline"
+        onclick={openCreateForm}
+        class="text-mentor-primary border-mentor-primary hover:text-mentor-white hover:bg-mentor-primary "
+      >
         <Plus class="mr-2 h-4 w-4" />
         新增序號
       </Button>
-      <Button onclick={openUploadDialog}>
+      <Button
+        onclick={openUploadDialog}
+        class="text-mentor-white bg-mentor-primary hover:text-mentor-primary hover:bg-mentor-white hover:border-mentor-primary border"
+      >
         <Upload class="mr-2 h-4 w-4" />
         上傳 Excel
       </Button>
@@ -463,22 +491,6 @@
           />
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <Label for="mobile_product_filter">產品</Label>
-            <select
-              id="mobile_product_filter"
-              bind:value={filters.product_id}
-              on:change={handleFilterChange}
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="">全部產品</option>
-              {#each products as product}
-                <option value={product.id}
-                  >{product.brand} {product.model_number}</option
-                >
-              {/each}
-            </select>
-          </div>
           <div class="flex items-end">
             <Button variant="ghost" onclick={clearFilters} class="w-full"
               >清除</Button
@@ -510,27 +522,15 @@
           on:input={handleFilterChange}
         />
       </div>
-      <div>
-        <Label for="product_filter">產品</Label>
-        <select
-          id="product_filter"
-          bind:value={filters.product_id}
-          on:change={handleFilterChange}
-          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="">全部產品</option>
-          {#each products as product}
-            <option value={product.id}
-              >{product.brand} {product.model_number}</option
-            >
-          {/each}
-        </select>
-      </div>
       <div class="flex items-end">
         <Button variant="ghost" onclick={clearFilters}>清除篩選</Button>
       </div>
     </div>
   </div>
+  <ProductFilter
+    bind:productFilters
+    onFiltersChange={handleProductFilterChange}
+  />
 
   {#if isLoading}
     <div class="text-center p-8">
@@ -599,9 +599,10 @@
       <table class="w-full text-sm">
         <thead class="bg-muted/50">
           <tr class="[&_th]:px-4 [&_th]:py-3 [&_th]:text-left">
-            <th>序號</th>
             <th>產品類型</th>
             <th>產品型號</th>
+            <th>序號</th>
+            <!-- <th>驗證碼</th> -->
             <th>保固書</th>
             <th>建立時間</th>
             <th>操作</th>
@@ -610,11 +611,12 @@
         <tbody>
           {#each serials as serial, index (serial.id + "_" + index)}
             <tr class="border-t [&_td]:px-4 [&_td]:py-3">
-              <td class="font-medium">{serial.serial_number}</td>
               <td class="max-w-xs truncate"
                 >{getProductType(serial.product_id)}</td
               >
               <td>{getProductModelNumber(serial.product_id)}</td>
+              <td class="font-medium">{serial.serial_number}</td>
+              <!-- <td class="font-medium">{serial.checksum}</td> -->
               <td class="flex items-center">
                 {#if serial.warranty_id}
                   <Button

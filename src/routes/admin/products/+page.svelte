@@ -7,14 +7,13 @@
     CreateProductRequest,
     UpdateProductRequest,
   } from "$lib/api";
-  import type { ProductFilters } from "$lib/types";
+  import type { ProductFilters, ProductFiltersOnchangeData } from "$lib/types";
   import { notificationStore } from "$stores/notifications";
   import Button from "$components/ui/Button.svelte";
   import Dialog from "$components/ui/Dialog.svelte";
   import ProductForm from "$components/ProductForm.svelte";
-  import ProductFilter from "$components/ProductFilter.svelte";
   import { Plus, FilePenLine, Trash2, Copy } from "lucide-svelte";
-
+  import ProductFilter from "$components/ProductFilter.svelte";
   let products: Product[] = [];
   let isLoading = true;
   let isFormLoading = false;
@@ -27,14 +26,10 @@
   let totalPages = 1;
 
   let filters: ProductFilters = {
-    brand: "",
-    type: "",
-    model_number: "",
+    category: "",
+    subcategory: "",
     size: "",
-    active: "",
   };
-
-  let productFilter: ProductFilter;
 
   async function fetchProducts() {
     isLoading = true;
@@ -42,12 +37,8 @@
       const params = new URLSearchParams();
       params.set("page", String(page));
       params.set("page_size", String(pageSize));
-      if (filters.brand !== "") params.set("brand", filters.brand);
-      if (filters.type !== "") params.set("type", filters.type);
-      if (filters.model_number !== "")
-        params.set("model_number", filters.model_number);
-      if (filters.size !== "") params.set("size", filters.size);
-      if (filters.active !== "") params.set("active", filters.active);
+      params.set("brand", "Mentor");
+      params.set("type", filters.category + "-" + filters.subcategory);
 
       const response = await apiService.getProducts(params);
       if (response.data) {
@@ -62,9 +53,7 @@
     }
   }
 
-  function handleFiltersChange(newFilters: ProductFilters) {
-    filters = newFilters;
-    page = 1;
+  function handleFiltersChange(data: ProductFiltersOnchangeData) {
     fetchProducts();
   }
 
@@ -152,7 +141,10 @@
 <div>
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold">產品列表</h2>
-    <Button onclick={openCreateForm}>
+    <Button
+      onclick={openCreateForm}
+      class="text-mentor-white bg-mentor-primary hover:text-mentor-primary hover:bg-mentor-white hover:border-mentor-primary border"
+    >
       <Plus class="mr-2 h-4 w-4" />
       新增產品
     </Button>
@@ -160,9 +152,8 @@
 
   <!-- 產品篩選組件 -->
   <ProductFilter
-    bind:filters
+    bind:productFilters={filters}
     onFiltersChange={handleFiltersChange}
-    bind:this={productFilter}
   />
 
   {#if isLoading}
