@@ -29,16 +29,14 @@
 </script>
 
 <!-- 全版面背景容器 -->
-<div class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed relative">
+<div class="min-h-screen flex flex-col">
   <!-- 內容容器 -->
-  <div class="relative z-10">
+  <div class="relative z-10 flex-1">
     <NotificationContainer />
-
     <Header />
-
     <main class="w-full">
       {@render children()}
     </main>
   </div>
+  <Footer />
 </div>
-<Footer />

@@ -25,7 +25,13 @@
   };
 
   const actions = ["LOGIN", "CREATE", "UPDATE", "DELETE"];
-  const tableNames = ["users", "products", "warranty_registrations", "auth"];
+  const tableNames = [
+    "users",
+    "products",
+    "serials",
+    "warranty_registrations",
+    "auth",
+  ];
 
   async function fetchAuditLogs() {
     isLoading = true;

@@ -816,7 +816,7 @@
         <table class="w-full text-sm">
           <thead class="bg-red-100">
             <tr>
-              <th class="text-left p-2 text-red-800">行號</th>
+              <th class="text-left p-2 text-red-800">列號</th>
               <th class="text-left p-2 text-red-800">產品ID</th>
               <th class="text-left p-2 text-red-800">序號</th>
               <th class="text-left p-2 text-red-800">完整序號</th>

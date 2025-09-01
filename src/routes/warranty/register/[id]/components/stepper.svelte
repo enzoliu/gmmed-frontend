@@ -1,8 +1,8 @@
 <script lang="ts">
   export let step: number;
   // 使用完整的 Tailwind 類別名稱
-  const completedStyle = "border-mentor-teal text-mentor-teal";
-  const activeStyle = "border-mentor-primary text-mentor-primary";
+  const completedStyle = "border-mentor-primary text-mentor-primary";
+  const activeStyle = "border-mentor-teal text-mentor-teal";
   const inactiveStyle = "border-mentor-gray text-mentor-gray";
 
   const style = (s: number) => {
@@ -21,7 +21,7 @@
 
 {#if step}
   <ol
-    class="flex items-center w-full p-2 space-x-2 text-sm font-medium text-center border-b border-gray-200 sm:text-base sm:p-4 sm:space-x-4 rtl:space-x-reverse"
+    class="flex items-center justify-center w-full p-2 space-x-2 text-sm font-medium text-center border-b border-gray-200 sm:text-base sm:p-4 sm:space-x-4 rtl:space-x-reverse"
   >
     <li class="flex items-center {style(1)}">
       <span
