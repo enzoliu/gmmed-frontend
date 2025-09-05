@@ -230,7 +230,7 @@
     showFailedItems = false; // 隱藏失敗項目顯示
 
     const validRow = (row: any[]) => {
-      return row.some((cell) => cell !== null && cell.trim() !== "");
+      return row.some((cell) => cell && String(cell).trim() !== "");
     };
 
     try {
@@ -269,6 +269,20 @@
             error: `資料異常，請檢查。`,
           });
           continue; // 跳過空行
+        }
+
+        const exists = serialsToImport.some(
+          (item) => item.full_serial_number === fullSerialNumber
+        );
+        if (exists) {
+          failedItems.push({
+            index: i, // 行號從 0 開始
+            product_id: null,
+            serial_number: null,
+            full_serial_number: fullSerialNumber,
+            error: `檔案內存在重複的序號`,
+          });
+          continue;
         }
 
         // 根據 model_number 找到對應的 product_id
@@ -817,7 +831,7 @@
           <thead class="bg-red-100">
             <tr>
               <th class="text-left p-2 text-red-800">列號</th>
-              <th class="text-left p-2 text-red-800">產品ID</th>
+              <th class="text-left p-2 text-red-800">產品型號</th>
               <th class="text-left p-2 text-red-800">序號</th>
               <th class="text-left p-2 text-red-800">完整序號</th>
               <th class="text-left p-2 text-red-800">錯誤原因</th>
@@ -826,14 +840,15 @@
           <tbody>
             {#each failedItems as item}
               <tr class="border-b border-red-200">
-                <td class="p-2 text-red-700">{item.index + 1}</td>
+                <td class="p-2 text-red-700">{item.index + 2}</td>
                 <td class="p-2 text-red-700 font-mono text-xs"
-                  >{item.product_id || "N/A"}</td
+                  >{products.find((p) => p.id === item.product_id)
+                    ?.model_number || "N/A"}</td
                 >
                 <td class="p-2 text-red-700 font-mono text-xs"
                   >{item.serial_number || "N/A"}</td
                 >
-                <td class="p-2 text-red-700 font-mono text-xs max-w-32 truncate"
+                <td class="p-2 text-red-700 font-mono text-xs"
                   >{item.full_serial_number || "N/A"}</td
                 >
                 <td class="p-2 text-red-700">{item.error}</td>
